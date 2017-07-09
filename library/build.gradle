@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+
+def VERSION_NAME = "1.0.0"
+def VERSION_CODE = "1"
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            debuggable false
+        }
+
+        debug {
+            minifyEnabled false
+            debuggable true
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+

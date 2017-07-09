@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/editorFrame">
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true"
+        fab:menu_backgroundColor="#ccffffff"
+        android:translationZ="3dp"
+        android:elevation="20dp">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_compass"
+            fab:fab_size="mini"
+            fab:fab_label="Load" />
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_compass"
+            fab:fab_size="mini"
+            fab:fab_label="New" />
+
+
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        fab:fab_size="mini"
+        android:src="@android:drawable/ic_input_add"
+        fab:fab_colorNormal="#F50057"
+        fab:fab_colorPressed="#E8004A"
+        fab:fab_colorRipple="#C20024"
+        fab:fab_shadowColor="#000"
+        fab:fab_elevationCompat="6dp"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+    <include layout="@layout/content_editor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</FrameLayout>
