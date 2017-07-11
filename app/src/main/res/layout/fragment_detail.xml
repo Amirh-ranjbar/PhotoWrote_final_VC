@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent">
+    android:background="@color/primary_light">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,10 +16,9 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="Name"
                 android:ems="10"
-                android:id="@+id/titleEditText" />
+                android:id="@+id/titleEditText"
+                android:inputType="textShortMessage" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -29,16 +28,15 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/infoEditText"
-                    android:hint="hint" />
+                    android:id="@+id/infoEditText" />
 
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:text="Button"
+                android:text="Save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/saveChangesButton" />
+                android:id="@+id/saveChangesButton"/>
 
         </LinearLayout>
     </ScrollView>

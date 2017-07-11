@@ -58,6 +58,7 @@ public class DrawingViewFragment extends Fragment
     // saves Note information to the database
     public void saveNote(String title , String info) {
         drawingView.setPhotoUri(photoUri);
+        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , saveNote: title :" + title);
         drawingView.SavingNote(title, info);
     }
 
@@ -73,6 +74,23 @@ public class DrawingViewFragment extends Fragment
     public void setDrawingViewlistener(DrawingView.OnNoteTouchedListener l) {
         drawingView.setOnNoteTouchedListener(l);
     }
+
+    public void clearDrawingView(){
+        drawingView.clear();
+    }
+
+    public void setDrawingViewParameters(int h , int  w){
+
+        Log.d(TAG , " DrawingView   , height : " + drawingView.getHeight());
+        Log.d(TAG , " DrawingView   , width : " + drawingView.getHeight());
+        Log.d(TAG , " DrawingView   , parameters : " + drawingView.getLayoutParams());
+
+//        drawingView.measure(h , w);
+        drawingView.setDesiredParameters(w , h);
+//        drawingView.measure(drawingView.getMeasuredWidthAndState(),drawingView.getMeasuredHeightAndState());
+
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -99,7 +117,7 @@ public class DrawingViewFragment extends Fragment
         Log.d(TAG, " onLoadFinished  shod  , data  : " + data);
 
         // if the contact exists in the database, display its data
-        if (data != null && data.moveToFirst()) {
+        if (data != null && data.moveToFirst() && photoUri != null) {
             Log.d(TAG, " onLoadFinished  jolotarrrrrrrr  , data  : " + data);
 
             Toast.makeText(getContext(), "Previous Notes has Successfully Loaded", Toast.LENGTH_LONG).show();

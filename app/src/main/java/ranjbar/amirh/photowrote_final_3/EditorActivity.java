@@ -13,19 +13,25 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ranjbar.amirh.photowrote_final_3.Views.DrawingView.OnNoteTouchedListener;
 
@@ -40,23 +46,27 @@ public class  EditorActivity extends AppCompatActivity
     //com.github.clans.fab.FloatingActionButton
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
+    private FloatingActionButton fab3;
     private FloatingActionButton fabEdit;
-
+    private FrameLayout drawingViewFrameLayout;
 
     private Uri photoUri;// for loading notes as contactUri
 
     int showHideFabs = 0;
     int fabsState = 1;
+    boolean AddSave = false;
     int openPicType=0;
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
     private static final int REQUEST_TAKE_PICTURE = 1;
+    private static final int CAMERA_REQUEST = 1888;
     private static final String AUTHORITY=
             BuildConfig.APPLICATION_ID+".provider";
     public static final String NOTE_URI = "note_uri";
     public static final String NOTE_TITLE = "note_title";
     public static final String NOTE_INFO = "note_info";
 
+    String mCurrentPhotoPath;
     private DrawingViewFragment drawingViewFragment;
 
     @Override
@@ -67,7 +77,6 @@ public class  EditorActivity extends AppCompatActivity
         isStoragePermissionGranted();
 
         fabMenu = (FloatingActionMenu)findViewById(R.id.fab);
-        fabMenu.setOnClickListener(FABclickListener);
         fabMenu.setClosedOnTouchOutside(true);
 
         fabEdit = (FloatingActionButton) findViewById(R.id.fab_save);
@@ -76,9 +85,17 @@ public class  EditorActivity extends AppCompatActivity
 
         fab1 = (FloatingActionButton) findViewById(R.id.fab_1);
         fab1.setOnClickListener(fab1_ChangeListener);
+        ButtonChangeIcon(fab1, R.drawable.ic_insert_photo_black_24);
 
         fab2 = (FloatingActionButton) findViewById(R.id.fab_2);
         fab2.setOnClickListener(fab2_ChangeListener);
+        ButtonChangeIcon(fab2,R.drawable.ic_note_add_black_24);
+
+        fab3 = (FloatingActionButton) findViewById(R.id.fab_3);
+        fab3.setOnClickListener(fab3_ChangeListener);
+        ButtonChangeIcon(fab3 , R.drawable.ic_camera_black_24);
+
+        drawingViewFrameLayout = (FrameLayout) findViewById(R.id.drawingViewFrame) ;
 
         drawingViewFragment= new DrawingViewFragment();
         FragmentTransaction transaction =
@@ -88,58 +105,18 @@ public class  EditorActivity extends AppCompatActivity
         transaction.commit(); // causes DetailFragment to display
     }
 
-    public View.OnClickListener FABclickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-
-//                //change mian Fab to save button for saving new Note
-//                // running detailFragment
-//                //then saveNote b drawingVIew
-//                setAddEditDetailsFragment(null);
-
-        }
-    };
 
     public View.OnClickListener fab1_ChangeListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-
-            if(fabsState==1){
                 //enter in loading image with existing note by image name
                 fabMenu.close(true);
-                fab1.setLabelText("Edit");
-                fabsState = 3;
                 openPicType = 0;
-
                 onPickPhoto(view);
-
                 setDrawingViewPhotoUri();// set Photo Uri that was Loaded for loading notes
                 drawingViewFragment.setLoadEditState(true);
                 drawingViewFragment.setDrawingViewlistener(changeListener);
-            }
-            else if(fabsState==2){
-                //Activating drawingView TouchEvent for drawing line (Adding new Note)
-                fabMenu.close(true);
-                //Extra work for sure
-                //in this state the icons not change
-                fabsState = 2;
-                drawingViewFragment.setLoadEditState(false);
 
-                //creating new FloatingActionButton for saving new note
-                fabEdit.setVisibility(View.VISIBLE);
-                fabMenu.setVisibility(View.INVISIBLE);
-
-
-            }
-            else if (fabsState == 3){
-                //Just loading previous notes for specific image by image name
-//                setFabsPosition(false);//hide mini fabs
-                fabMenu.close(true);
-                fab1.setLabelText("Add Note");
-                fabsState = 2;
-
-//                drawingViewFragment.setLoadEditState(false);
-            }
         }
     };
     public View.OnClickListener fab2_ChangeListener = new View.OnClickListener() {
@@ -147,33 +124,66 @@ public class  EditorActivity extends AppCompatActivity
         public void onClick(View view) {
             //Listen for Opening New Image
             //Fixed in every State of App
-            fabsState=2;
+            fabEdit.setVisibility(View.VISIBLE);
+            ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
             fabMenu.close(false);
-            fab1.setLabelText("Add Note");
-
-            onPickPhoto(view);
             openPicType = 0;
-            //
+            onPickPhoto(view);
             drawingViewFragment.setLoadEditState(true);
             drawingViewFragment.setDrawingViewlistener(changeListener);
             //Ask question for loading previous notes   ????????????
-
             // drawingViewFragment.setLoaderManager();// load previous note by the opened image
+        }
+    };
 
+    public View.OnClickListener fab3_ChangeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View view) {
+            //Take Picture via Camera and save it
+            fabEdit.setVisibility(View.VISIBLE);
+            ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
+            fabMenu.close(false);
+            openPicType = 1;
+            dispatchTakePicture();
+            drawingViewFragment.setLoadEditState(true);
+            drawingViewFragment.setDrawingViewlistener(changeListener);
         }
     };
 
     public View.OnClickListener fabEdit_changeListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            //Creating new note and saving to database
+            if(AddSave) {
+                AddSave = false;
+                fabMenu.showMenu(true);
+                ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
+                //open AddEdit Fragment for saving details
+                setAddEditDetailsFragment(null);
+                drawingViewFragment.setLoadEditState(true);
+            }
+            else {
+                AddSave = true;
+                //Activating drawingView TouchEvent for drawing line (Adding new Note)
+                fabMenu.hideMenu(true);
+                //Extra work for sure
+                //in this state the icons not change
+                drawingViewFragment.setLoadEditState(false);
+                //creating new FloatingActionButton for saving new note
+                //change icon
+                ButtonChangeIcon(fabEdit, R.drawable.ic_done_black_24);
 
-            fabEdit.setVisibility(View.INVISIBLE);
-            fabMenu.setVisibility(View.VISIBLE);
-
-            //open AddEdit Fragment for saving details
-
+            }
         }
     };
+    private void ButtonChangeIcon(FloatingActionButton button, int drawable){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            button.setImageDrawable(getResources().getDrawable(drawable, getBaseContext().getTheme()));
+        }
+        else {
+            button.setImageDrawable(getResources().getDrawable(drawable));
+        }
+    }
 
     private void setAddEditDetailsFragment(Bundle arguments){
 
@@ -187,13 +197,10 @@ public class  EditorActivity extends AppCompatActivity
         transaction.add(R.id.editorFrame, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit(); // causes DetailFragment to display
-
     }
 
     public void setDrawingViewPhotoUri(){
-//        Bundle arguments = new Bundle();
-//        arguments.putParcelable(NOTE_URI, photoUri);
-//        drawingViewFragment.setArguments(arguments);
+        drawingViewFragment.clearDrawingView();
         drawingViewFragment.setPhotoUri(photoUri);
 
         //call it for Loading info by photoUri
@@ -223,6 +230,18 @@ public class  EditorActivity extends AppCompatActivity
         }
     }
 
+    public void setDrawingViewFrameParameters(int height , int width){
+//        drawingViewFrameLayout.setLayoutParams(parameters);
+        Log.d(TAG , " DrawingView FrameLayout  , height : " + drawingViewFrameLayout.getHeight());
+        Log.d(TAG , " DrawingView FrameLayout  , width : " + drawingViewFrameLayout.getHeight());
+        Log.d(TAG , " DrawingView FrameLayout  , parameters : " + drawingViewFrameLayout.getLayoutParams());
+        Log.d(TAG , " height of imageVIew : " + height);
+        Log.d(TAG , " width of imageVIew : " + width);
+
+        drawingViewFragment.setDrawingViewParameters(height , width);
+
+    }
+
     // Trigger gallery selection for a photo
     public void onPickPhoto(View view) {
         // Create intent for picking a photo from the gallery
@@ -250,18 +269,21 @@ public class  EditorActivity extends AppCompatActivity
 
                 // Do something with the photo based on Uri
                 Bitmap selectedImage = null;
+
                 try {
                     selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-
                     //setting photoUri for drawingFragment
                     setDrawingViewPhotoUri();
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 // Load the selected image into a preview
                 ImageView ivPreview = (ImageView) findViewById(R.id.imageView);
                 ivPreview.setImageBitmap(selectedImage);
+
+                setDrawingViewFrameParameters(selectedImage.getHeight() ,selectedImage.getWidth() );
             }
         }
         else {
@@ -281,6 +303,9 @@ public class  EditorActivity extends AppCompatActivity
                             imageView.setImageBitmap(bitmap);
                             Toast.makeText(this, selectedImage.toString(),
                                     Toast.LENGTH_LONG).show();
+
+                            setDrawingViewPhotoUri();
+                            galleryAddPic();
                         } catch (Exception e) {
                             Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
                                     .show();
@@ -291,20 +316,67 @@ public class  EditorActivity extends AppCompatActivity
         }
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PhotoWrote_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoUri = FileProvider.getUriForFile(this,
+                        "ranjbar.amirh.photowrote_final_3.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PICTURE);
+            }
+        }
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)  ;
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+        Log.d(TAG , " gallery has refreshed : contentUri" + contentUri);
+    }
+
     @Override
     public void onSaveChanges(String title, String info) {
 
         getSupportFragmentManager().popBackStack();
 
+        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onSaveChanges : title :" +title);
         drawingViewFragment.saveNote(title , info);
 
-
-        drawingViewFragment.setLoadEditState(true);
-       drawingViewFragment.onCreateLoader(DrawingViewFragment.NOTE_LOADER,null);
-//        drawingViewFragment.setLoaderManager();
+        drawingViewFragment.getLoaderManager()
+                .restartLoader(DrawingViewFragment.NOTE_LOADER
+                        , null,
+                        drawingViewFragment.getLoaderCallBack());
         drawingViewFragment.setDrawingViewlistener(changeListener);
-        showHideFabs = 0;
-        fabsState = 2;
     }
 
     private OnNoteTouchedListener changeListener = new OnNoteTouchedListener()

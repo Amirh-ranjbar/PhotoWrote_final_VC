@@ -40,6 +40,9 @@ public class DrawingView extends View{
     float pointY1 ;
     float pointX2 ;
     float pointY2 ;
+
+    int desiredWidth =100;
+    int desiredHeight = 100;
     // stores next path
     ArrayList<Path> pathArrayList = new ArrayList<>();
     ArrayList<String> titleArrayList = new ArrayList<>();
@@ -116,25 +119,121 @@ public class DrawingView extends View{
     public Paint getDrawPaint(){
         return drawPaint;
     }
+
+    public void clear(){
+        pathArrayList.clear();
+        titleArrayList.clear();
+        infoArrayList.clear();
+        pointX1 = pointY1 = pointX2 = pointY2 = 0;
+        invalidate();
+    }
+
+    public void setDesiredWidthHeight(int height , int width){
+        desiredHeight = height ;
+        desiredWidth = width ;
+    }
+
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+////        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//
+//        Log.d(TAG , "---- , width : " + widthMeasureSpec);
+//        Log.d(TAG , "---- , height : " + heightMeasureSpec);
+//
+//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+//        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+//        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+//
+//        int width;
+//        int height;
+//
+//        //Measure Width
+//        if (widthMode == MeasureSpec.EXACTLY) {
+//            //Must be this size
+//            width = widthSize;
+//            Log.d(TAG , "widthMode == MeasureSpec.EXACTLY , width : " + width);
+//        } else if (widthMode == MeasureSpec.AT_MOST) {
+//            //Can't be bigger than...
+//            width = Math.min(desiredWidth, widthSize);
+//            Log.d(TAG , "widthMode == MeasureSpec.AT_MOST , width : " + width);
+//
+//        } else {
+//            //Be whatever you want
+//            width = desiredWidth;
+//            Log.d(TAG , "else  , width : " + width);
+//
+//        }
+//
+//        //Measure Height
+//        if (heightMode == MeasureSpec.EXACTLY) {
+//            //Must be this size
+//            height = heightSize;
+//            Log.d(TAG , "heightMode == MeasureSpec.EXACTLY , height : " + height);
+//
+//        } else if (heightMode == MeasureSpec.AT_MOST) {
+//            //Can't be bigger than...
+//            height = Math.min(desiredHeight, heightSize);
+//            Log.d(TAG , "heightMode == MeasureSpec.AT_MOST , height : " + height);
+//
+//        } else {
+//            //Be whatever you want
+//            height = desiredHeight;
+//            Log.d(TAG , " else  , height : " + height);
+//        }
+//
+//        //MUST CALL THIS
+//        setMeasuredDimension(width, height);
+//
+//    }
+    public void setDesiredParameters(int w , int h){
+        desiredHeight = h;
+        desiredWidth = w;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
 
         float height = noteImageBitmap.getHeight();
         float width = noteImageBitmap.getWidth();
 
+        float startPoint[]={0f,0f};
         float endPoint[]={0f,0f};
 
-        if(pointX1 == pointX2 && pointY1 == pointY2 && !loadEditType)
+        PathMeasure pmStart ;
+        PathMeasure pmEnd ;
+
+        if(pointX1 == pointX2 && pointY1 == pointY2  )
         {
-            Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
+            if(!loadEditType)
+                Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
         }
-        else {
+        else  {
+
             canvas.drawLine(pointX1, pointY1, pointX2, pointY2, drawPaint);
-            canvas.drawBitmap(noteImageBitmap,pointX2 - width,pointY2- height ,drawPaint);
+            if(pointX1 < pointX2)
+                 canvas.drawBitmap(noteImageBitmap,pointX1 ,pointY1 - height ,drawPaint);
+            else
+                canvas.drawBitmap(noteImageBitmap,pointX2 ,pointY2 - height ,drawPaint);
+
         }
+        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onDraw paths :  :" );
+
         for(Path p : pathArrayList ) {
+
+            pmStart = new PathMeasure(p,false);
+            pmStart.getPosTan(0 ,startPoint,null);
+
+            pmEnd = new PathMeasure(p,false);
+            pmEnd.getPosTan(pmEnd.getLength() ,endPoint,null);
+
             canvas.drawPath(p, drawPaint);
-            canvas.drawBitmap(noteImageBitmap, endPoint[0] - width , endPoint[1] - height ,drawPaint);
+            if(startPoint[0] < endPoint[0])
+                  canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.noteimage)
+                          , startPoint[0] , startPoint[1] - height ,drawPaint);
+            else
+                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.noteimage)
+                        , endPoint[0] , endPoint[1] - height ,drawPaint);
         }
     }
 
@@ -147,11 +246,14 @@ public class DrawingView extends View{
         float pX = event.getX(actionIndex);
         float pY = event.getY(actionIndex);
 
-        PathMeasure pm ;
-
+        float startPoint[]={0f,0f};
         float endPoint[]={0f,0f};
 
+        PathMeasure pmStart ;
+        PathMeasure pmEnd ;
+
         if(loadEditType){
+
             //Load mode
             // determine whether touch started, ended or is moving
             if (action == MotionEvent.ACTION_DOWN ||
@@ -165,17 +267,48 @@ public class DrawingView extends View{
                 for(int cnt=0 ; cnt< pathArrayList.size() ; cnt++ ) {
                     p = pathArrayList.get(cnt);
 
-                    pm = new PathMeasure(p,false);
-                    pm.getPosTan(pm.getLength() ,endPoint,null);
+                    Log.d(TAG, " points   : " + pX + " + " + pY);
 
-                    if(pX > (endPoint[0] - noteImageBitmap.getWidth())
-                            && pX < endPoint[0]
-                            && pY > (endPoint[1] - noteImageBitmap.getHeight())
-                            && pY < (endPoint[1]))
-                    {
-                        //call the detailFragment
-                        //need DrawingView interface that implement in EditorActivity
-                        onNoteTouchedListener.onNoteTouched(titleArrayList.get(cnt), infoArrayList.get(cnt));
+                    pmStart = new PathMeasure(p, false);
+                    pmStart.getPosTan(0, startPoint, null);
+
+                    pmEnd = new PathMeasure(p, false);
+                    pmEnd.getPosTan(pmEnd.getLength(), endPoint, null);
+
+                    Log.d(TAG, " point  pX >  : " + (endPoint[0] - noteImageBitmap.getWidth()));
+                    Log.d(TAG, " point  pX <  : " + endPoint[0]);
+                    Log.d(TAG, " point  pY >  : " + (endPoint[1] - noteImageBitmap.getHeight()));
+                    Log.d(TAG, " point  pY <  : " + endPoint[1]);
+
+                    if (startPoint[0] < endPoint[0]) {
+                        if (pX > startPoint[0]
+                                && pX < (startPoint[0] + noteImageBitmap.getWidth())
+                                && pY > (startPoint[1] - noteImageBitmap.getHeight())
+                                && pY < (startPoint[1])
+                                ) {
+                            //call the detailFragment
+                            //need DrawingView interface that implement in EditorActivity
+
+                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
+                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
+
+                            onNoteTouchedListener.onNoteTouched(titleArrayList.get(cnt), infoArrayList.get(cnt));
+                        }
+                    }
+                    else  {
+                        if (pX > endPoint[0]
+                                && pX < (endPoint[0] + noteImageBitmap.getWidth())
+                                && pY > (endPoint[1] - noteImageBitmap.getHeight())
+                                && pY < (endPoint[1])
+                                ) {
+                            //call the detailFragment
+                            //need DrawingView interface that implement in EditorActivity
+
+                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
+                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
+
+                            onNoteTouchedListener.onNoteTouched(titleArrayList.get(cnt), infoArrayList.get(cnt));
+                        }
                     }
                 }
             }
@@ -185,6 +318,7 @@ public class DrawingView extends View{
             invalidate(); // redraw
         }
         else {
+
             //Edit Mode
             // Checks for the event that occurs
             switch (event.getAction()) {
@@ -207,11 +341,11 @@ public class DrawingView extends View{
 
     public void SavingNote(String title , String info) {
 
-        if (!loadEditType) {
 
             if (pointX1 == pointX2 && pointY1 == pointY2) {
-                Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
-            } else {
+                if(!loadEditType)
+                    Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
+            } else  {
 
                 Log.d(TAG, " points   : " + pointX1 + " + " + pointY1);
                 Log.d(TAG, " points   : " + pointX2 + " + " + pointY2);
@@ -235,6 +369,10 @@ public class DrawingView extends View{
                     path.moveTo(pointX1, pointY1);
                     path.lineTo(pointX2, pointY2);
                     pathArrayList.add(path);
+
+                    titleArrayList.add(title);
+
+                    infoArrayList.add(info);
 
                     // use Activity's ContentResolver to invoke
                     // insert on the AddressBookContentProvider
@@ -272,5 +410,4 @@ public class DrawingView extends View{
                 }
             }
         }
-    }
 }
