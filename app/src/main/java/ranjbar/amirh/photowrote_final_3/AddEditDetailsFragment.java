@@ -1,14 +1,18 @@
 package ranjbar.amirh.photowrote_final_3;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by amirh on 28/06/17.
@@ -23,6 +27,8 @@ public class AddEditDetailsFragment extends Fragment {
 
     private String noteTitle;
     private String noteInfo;
+
+    private Uri photoUri;
 
     public interface AddEditDetailFragmentListener{
         void onSaveChanges(String title , String info);
@@ -76,7 +82,8 @@ public class AddEditDetailsFragment extends Fragment {
 
             noteTitle = titleEditText.getText().toString();
             noteInfo = infoTextInputLayout.getEditText().getText().toString();
-
+            Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde : title :" + noteTitle);
+            Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde : info :" + noteInfo);
             detailFragmentListener.onSaveChanges(noteTitle , noteInfo);
         }
     };

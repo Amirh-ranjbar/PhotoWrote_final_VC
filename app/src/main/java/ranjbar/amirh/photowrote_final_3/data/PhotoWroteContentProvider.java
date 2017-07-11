@@ -1,4 +1,4 @@
-// AddressBookContentProvider.java
+
 // ContentProvider subclass for manipulating the app's database
 package ranjbar.amirh.photowrote_final_3.data;
 
@@ -39,10 +39,10 @@ public class PhotoWroteContentProvider extends ContentProvider {
                 Note.TABLE_NAME, CONTACTS);
     }
 
-    // called when the AddressBookContentProvider is created
+
     @Override
     public boolean onCreate() {
-        // create the AddressBookDatabaseHelper
+
         dbHelper = new PhotoWroteDataBaseHelper(getContext());
         return true; // ContentProvider successfully created
     }
@@ -65,7 +65,7 @@ public class PhotoWroteContentProvider extends ContentProvider {
         queryBuilder.setTables(Note.TABLE_NAME);
 
         switch (uriMatcher.match(uri)) {
-            case ONE_CONTACT: // contact with specified id will be selected
+            case ONE_CONTACT: // Note with specified id will be selected
                 queryBuilder.appendWhere(
 //                        Note._ID + "=" + uri.getLastPathSegment());
                     Note.COLUMN_NAME + "=" + uri.getLastPathSegment());
@@ -74,7 +74,7 @@ public class PhotoWroteContentProvider extends ContentProvider {
                 Log.d(TAG , "UriMatcher  :  " + uri.getLastPathSegment());
 
                 break;
-            case CONTACTS: // all contacts will be selected
+            case CONTACTS: // all Notes will be selected
                 Log.d(TAG , "UriMatcher  : all Notes will be selected " );
                 break;
             default:
@@ -82,7 +82,7 @@ public class PhotoWroteContentProvider extends ContentProvider {
                         getContext().getString(R.string.invalid_query_uri) + uri);
         }
 
-        // execute the query to select one or all contacts
+        // execute the query to select one or all notes
         Cursor cursor = queryBuilder.query(dbHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
 
@@ -91,19 +91,19 @@ public class PhotoWroteContentProvider extends ContentProvider {
         return cursor;
     }
 
-    // insert a new contact in the database
+    // insert a new Note in the database
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         Uri newContactUri = null;
 
         switch (uriMatcher.match(uri)) {
             case CONTACTS:
-                // insert the new contact--success yields new contact's row id
+                // insert the new Note--success yields new Note's row id
                 long rowId = dbHelper.getWritableDatabase().insert(
                         Note.TABLE_NAME, null, values);
 
 
-                // if the contact was inserted, create an appropriate Uri;
+                // if the Note was inserted, create an appropriate Uri;
                 // otherwise, throw an exception
                 if (rowId > 0) { // SQLite row IDs start at 1
                     newContactUri = Note.buildContactUri(rowId);
@@ -130,7 +130,7 @@ public class PhotoWroteContentProvider extends ContentProvider {
         return newContactUri;
     }
 
-    // update an existing contact in the database
+    // update an existing Note in the database
     @Override
     public int update(Uri uri, ContentValues values,
                       String selection, String[] selectionArgs) {
@@ -141,7 +141,7 @@ public class PhotoWroteContentProvider extends ContentProvider {
                 // get from the uri the id of contact to update
                 String id = uri.getLastPathSegment();
 
-                // update the contact
+                // update the Note
                 numberOfRowsUpdated = dbHelper.getWritableDatabase().update(
                         Note.TABLE_NAME, values, Note._ID + "=" + id,
                         selectionArgs);
@@ -159,17 +159,17 @@ public class PhotoWroteContentProvider extends ContentProvider {
         return numberOfRowsUpdated;
     }
 
-    // delete an existing contact from the database
+    // delete an existing Note from the database
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int numberOfRowsDeleted;
 
         switch (uriMatcher.match(uri)) {
             case ONE_CONTACT:
-                // get from the uri the id of contact to update
+                // get from the uri the id of Note to update
                 String id = uri.getLastPathSegment();
 
-                // delete the contact
+                // delete the Note
                 numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
                         Note.TABLE_NAME, Note._ID + "=" + id, selectionArgs);
                 break;
@@ -186,19 +186,3 @@ public class PhotoWroteContentProvider extends ContentProvider {
         return numberOfRowsDeleted;
     }
 }
-
-
-/**************************************************************************
- * (C) Copyright 1992-2016 by Deitel & Associates, Inc. and               *
- * Pearson Education, Inc. All Rights Reserved.                           *
- *                                                                        *
- * DISCLAIMER: The authors and publisher of this book have used their     *
- * best efforts in preparing the book. These efforts include the          *
- * development, research, and testing of the theories and programs        *
- * to determine their effectiveness. The authors and publisher make       *
- * no warranty of any kind, expressed or implied, with regard to these    *
- * programs or to the documentation contained in these books. The authors *
- * and publisher shall not be liable in any event for incidental or       *
- * consequential damages in connection with, or arising out of, the       *
- * furnishing, performance, or use of these programs.                     *
- **************************************************************************/

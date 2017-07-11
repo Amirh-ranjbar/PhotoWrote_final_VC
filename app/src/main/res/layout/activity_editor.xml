@@ -6,7 +6,28 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/editorFrame">
+    android:id="@+id/editorFrame"
+    android:background="@color/primary_dark">
+
+    <TextView
+        android:text="Welcome"
+        android:layout_gravity="top|left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/text1_padding_top"
+        android:paddingLeft="@dimen/text_padding_left"
+        android:textSize="@dimen/text_padding_left"
+        android:id="@+id/textView1" >
+
+    </TextView>
+
+    <TextView
+        android:text="Let's do it"
+        android:textSize="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/text2_padding_top"
+        android:paddingLeft="@dimen/text_padding_left"/>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab"
@@ -19,7 +40,10 @@
         android:paddingLeft="10dp"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true"
-        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_shadowColor="@color/primary_dark"
+        fab:menu_colorNormal="@color/accent4"
+        fab:menu_colorPressed="@color/accent4"
+        fab:menu_colorRipple="@color/accent4"
         android:translationZ="3dp"
         android:elevation="20dp">
 
@@ -27,7 +51,7 @@
             android:id="@+id/fab_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_compass"
+            fab:menu_icon="@drawable/ic_insert_photo_black_24"
             fab:fab_size="mini"
             fab:fab_label="Load" />
 
@@ -36,10 +60,17 @@
             android:id="@+id/fab_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_compass"
+            fab:menu_icon="@drawable/ic_note_add_black_24"
             fab:fab_size="mini"
             fab:fab_label="New" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:menu_icon="@drawable/ic_camera_black_24"
+            fab:fab_label="Camera" />
 
 
     </com.github.clans.fab.FloatingActionMenu>
@@ -49,16 +80,17 @@
         android:id="@+id/fab_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        fab:fab_size="mini"
-        android:src="@android:drawable/ic_input_add"
-        fab:fab_colorNormal="#F50057"
-        fab:fab_colorPressed="#E8004A"
-        fab:fab_colorRipple="#C20024"
-        fab:fab_shadowColor="#000"
-        fab:fab_elevationCompat="6dp"
-        android:visibility="invisible"
-        tools:visibility="visible"/>
+        android:layout_gravity="bottom|left"
+        fab:fab_size="normal"
+        fab:menu_icon="@drawable/fab_add"
+        fab:fab_colorNormal="@color/accent_purple_light"
+        fab:fab_colorPressed="@color/accent"
+        fab:fab_colorRipple="@color/accent"
+        fab:fab_shadowColor="@color/accent"
+        android:layout_margin="@dimen/fab_margin"
+        fab:fab_elevationCompat="6dp"/>
+
+
 
     <include layout="@layout/content_editor"
         android:layout_width="match_parent"
