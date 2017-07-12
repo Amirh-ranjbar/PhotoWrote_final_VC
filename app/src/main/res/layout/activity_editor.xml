@@ -35,9 +35,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
+        android:layout_margin="@dimen/fab_margin"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true"
         fab:menu_shadowColor="@color/primary_dark"
@@ -48,12 +46,12 @@
         android:elevation="20dp">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_1"
+            android:id="@+id/fab_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:menu_icon="@drawable/ic_insert_photo_black_24"
             fab:fab_size="mini"
-            fab:fab_label="Load" />
+            fab:menu_icon="@drawable/ic_camera_black_24"
+            fab:fab_label="Camera" />
 
 
         <com.github.clans.fab.FloatingActionButton
@@ -62,15 +60,15 @@
             android:layout_height="wrap_content"
             fab:menu_icon="@drawable/ic_note_add_black_24"
             fab:fab_size="mini"
-            fab:fab_label="New" />
+            fab:fab_label="Gallery" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_3"
+            android:id="@+id/fab_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            fab:menu_icon="@drawable/ic_clear_black_24"
             fab:fab_size="mini"
-            fab:menu_icon="@drawable/ic_camera_black_24"
-            fab:fab_label="Camera" />
+            fab:fab_label="delete Notes" />
 
 
     </com.github.clans.fab.FloatingActionMenu>

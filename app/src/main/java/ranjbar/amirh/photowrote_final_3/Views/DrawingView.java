@@ -29,33 +29,32 @@ import static android.content.ContentValues.TAG;
 
 public class DrawingView extends View{
 
-    OnNoteTouchedListener onNoteTouchedListener;
+    private DrawingViewListener drawingViewListener;
     // defines paint and canvas
-    Paint drawPaint;
-    Bitmap noteImageBitmap;
-    int paintColor = Color.BLACK;
-    Uri photoUri;// for loading notes as via link
-    boolean addingNewNote =true;
-    float pointX1 ;
-    float pointY1 ;
-    float pointX2 ;
-    float pointY2 ;
+    private Paint drawPaint;
+    private Bitmap noteImageBitmap;
+    private int paintColor = Color.BLACK;
+    private Uri photoUri;// for loading notes as via link
+    private boolean addingNewNote =true;
+    private float pointX1 ;
+    private float pointY1 ;
+    private float pointX2 ;
+    private float pointY2 ;
 
-    int desiredWidth =100;
-    int desiredHeight = 100;
+    private int desiredWidth =100;
+    private int desiredHeight = 100;
     // stores next path
-    ArrayList<Path> pathArrayList = new ArrayList<>();
-    ArrayList<String> titleArrayList = new ArrayList<>();
-    ArrayList<String> infoArrayList = new ArrayList<>();
-    boolean loadEditType= true;//Enter in Load Mode by defualt
-
+    private ArrayList<Path> pathArrayList = new ArrayList<>();
+    private ArrayList<String> titleArrayList = new ArrayList<>();
+    private ArrayList<String> infoArrayList = new ArrayList<>();
+    private ArrayList<Integer> idArrayList = new ArrayList<>();
+    private boolean loadEditType= true;//Enter in Load Mode by defualt
 
     public DrawingView(Context context , AttributeSet attrs) {
         super(context, attrs);
         setFocusable(true);
         setFocusableInTouchMode(true);
         setupPaint();
-
     }
 
     public DrawingView(Context context) {
@@ -63,16 +62,15 @@ public class DrawingView extends View{
         setFocusable(true);
         setFocusableInTouchMode(true);
         setupPaint();
-
-
     }
 
-    public interface OnNoteTouchedListener{
-        void onNoteTouched(String title , String info);
+    public interface DrawingViewListener{
+        void onNoteTouched(String title , String info , int id);
+        void onDrawLineDetected(boolean detected);
     }
 
-    public void setOnNoteTouchedListener(OnNoteTouchedListener l){
-        onNoteTouchedListener = l;
+    public void setDrawingViewListener(DrawingViewListener l){
+        drawingViewListener = l;
     }
 
     public void setupPaint() {
@@ -92,7 +90,7 @@ public class DrawingView extends View{
         photoUri = uri;
     }
 
-    public void setArrayOfPoints(float p[], String title , String info) {
+    public void setArrayOfPoints(float p[], String title , String info , int id) {
         pointX1 = p[0];
         pointY1 = p[1];
         pointX2 = p[2];
@@ -106,6 +104,8 @@ public class DrawingView extends View{
         titleArrayList.add(title);
 
         infoArrayList.add(info);
+
+        idArrayList.add(id);
 
         Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
         Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
@@ -124,68 +124,11 @@ public class DrawingView extends View{
         pathArrayList.clear();
         titleArrayList.clear();
         infoArrayList.clear();
+        idArrayList.clear();
         pointX1 = pointY1 = pointX2 = pointY2 = 0;
         invalidate();
     }
 
-    public void setDesiredWidthHeight(int height , int width){
-        desiredHeight = height ;
-        desiredWidth = width ;
-    }
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-////        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//
-//        Log.d(TAG , "---- , width : " + widthMeasureSpec);
-//        Log.d(TAG , "---- , height : " + heightMeasureSpec);
-//
-//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-//        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-//        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-//
-//        int width;
-//        int height;
-//
-//        //Measure Width
-//        if (widthMode == MeasureSpec.EXACTLY) {
-//            //Must be this size
-//            width = widthSize;
-//            Log.d(TAG , "widthMode == MeasureSpec.EXACTLY , width : " + width);
-//        } else if (widthMode == MeasureSpec.AT_MOST) {
-//            //Can't be bigger than...
-//            width = Math.min(desiredWidth, widthSize);
-//            Log.d(TAG , "widthMode == MeasureSpec.AT_MOST , width : " + width);
-//
-//        } else {
-//            //Be whatever you want
-//            width = desiredWidth;
-//            Log.d(TAG , "else  , width : " + width);
-//
-//        }
-//
-//        //Measure Height
-//        if (heightMode == MeasureSpec.EXACTLY) {
-//            //Must be this size
-//            height = heightSize;
-//            Log.d(TAG , "heightMode == MeasureSpec.EXACTLY , height : " + height);
-//
-//        } else if (heightMode == MeasureSpec.AT_MOST) {
-//            //Can't be bigger than...
-//            height = Math.min(desiredHeight, heightSize);
-//            Log.d(TAG , "heightMode == MeasureSpec.AT_MOST , height : " + height);
-//
-//        } else {
-//            //Be whatever you want
-//            height = desiredHeight;
-//            Log.d(TAG , " else  , height : " + height);
-//        }
-//
-//        //MUST CALL THIS
-//        setMeasuredDimension(width, height);
-//
-//    }
     public void setDesiredParameters(int w , int h){
         desiredHeight = h;
         desiredWidth = w;
@@ -205,8 +148,10 @@ public class DrawingView extends View{
 
         if(pointX1 == pointX2 && pointY1 == pointY2  )
         {
-            if(!loadEditType)
+            if(!loadEditType) {
                 Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
+                drawingViewListener.onDrawLineDetected(false);
+            }
         }
         else  {
 
@@ -216,6 +161,7 @@ public class DrawingView extends View{
             else
                 canvas.drawBitmap(noteImageBitmap,pointX2 ,pointY2 - height ,drawPaint);
 
+            drawingViewListener.onDrawLineDetected(true);
         }
         Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onDraw paths :  :" );
 
@@ -292,7 +238,10 @@ public class DrawingView extends View{
                             Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
                             Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
 
-                            onNoteTouchedListener.onNoteTouched(titleArrayList.get(cnt), infoArrayList.get(cnt));
+                            drawingViewListener.onNoteTouched(
+                                    titleArrayList.get(cnt),
+                                    infoArrayList.get(cnt),
+                                    idArrayList.get(cnt));
                         }
                     }
                     else  {
@@ -307,8 +256,11 @@ public class DrawingView extends View{
                             Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
                             Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
 
-                            onNoteTouchedListener.onNoteTouched(titleArrayList.get(cnt), infoArrayList.get(cnt));
-                        }
+
+                            drawingViewListener.onNoteTouched(
+                                    titleArrayList.get(cnt),
+                                    infoArrayList.get(cnt),
+                                    idArrayList.get(cnt));     }
                     }
                 }
             }
@@ -375,7 +327,7 @@ public class DrawingView extends View{
                     infoArrayList.add(info);
 
                     // use Activity's ContentResolver to invoke
-                    // insert on the AddressBookContentProvider
+                    // insert on the PhotoWroteContentProvider
                     Uri newContactUri = getContext().getContentResolver().insert(
                             Note.CONTENT_URI, contentValues);
 
@@ -385,15 +337,16 @@ public class DrawingView extends View{
 
                         //Snackbar.make(linearLayout,
                         //       R.string.note_added,Snackbar.LENGTH_LONG).show();
-                        //listener.onAddEditCompleted(newContactUri);
+                        //listener.onAddEditCompleted(newNoteUri);
                     } else {
                         //Snackbar.make(linearLayout,
                         //        R.string.note_not_added, Snackbar.LENGTH_LONG).show();
                         Log.d(TAG, "kirrrrrrrrrrr  2::  " + R.string.note_not_added);
                     }
-                } else {
+                }
+                else {
                     // use Activity's ContentResolver to invoke
-                    // insert on the AddressBookContentProvider
+                    // insert on the PhotoWroteContentProvider
                     int updatedRows = getContext().getContentResolver().update(
                             photoUri, contentValues, null, null);
 

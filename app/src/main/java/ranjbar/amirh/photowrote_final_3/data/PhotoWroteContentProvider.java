@@ -150,7 +150,6 @@ public class PhotoWroteContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException(
                         getContext().getString(R.string.invalid_update_uri) + uri);
         }
-
         // if changes were made, notify observers that the database changed
         if (numberOfRowsUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
@@ -162,16 +161,24 @@ public class PhotoWroteContentProvider extends ContentProvider {
     // delete an existing Note from the database
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        int numberOfRowsDeleted;
+        int numberOfRowsDeleted =0;
 
         switch (uriMatcher.match(uri)) {
             case ONE_CONTACT:
-                // get from the uri the id of Note to update
-                String id = uri.getLastPathSegment();
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , ONE_CONTACT  :: " + uri);
+                // get from the Selection the id of Note to update
+//                String noteName = uri.getLastPathSegment();
 
                 // delete the Note
                 numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
-                        Note.TABLE_NAME, Note._ID + "=" + id, selectionArgs);
+                        Note.TABLE_NAME, Note._ID + "=" + selection, selectionArgs);
+                break;
+            case CONTACTS:
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , CONTACTS ::: " + uri);
+
+                numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
+                        Note.TABLE_NAME, Note._ID + "=" + selection, selectionArgs);
+
                 break;
             default:
                 throw new UnsupportedOperationException(

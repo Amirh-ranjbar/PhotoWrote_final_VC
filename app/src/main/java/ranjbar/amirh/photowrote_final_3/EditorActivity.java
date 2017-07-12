@@ -33,14 +33,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ranjbar.amirh.photowrote_final_3.Views.DrawingView.OnNoteTouchedListener;
+import ranjbar.amirh.photowrote_final_3.Views.DrawingView;
 
 import static android.content.ContentValues.TAG;
 
 public class  EditorActivity extends AppCompatActivity
-       implements AddEditDetailsFragment.AddEditDetailFragmentListener
+       implements AddEditDetailsFragment.AddEditDetailFragmentListener {
 
-{
     //com.github.clans.fab.FloatingActionMenu
     private FloatingActionMenu fabMenu;
     //com.github.clans.fab.FloatingActionButton
@@ -49,13 +48,11 @@ public class  EditorActivity extends AppCompatActivity
     private FloatingActionButton fab3;
     private FloatingActionButton fabEdit;
     private FrameLayout drawingViewFrameLayout;
-
     private Uri photoUri;// for loading notes as contactUri
-
-    int showHideFabs = 0;
-    int fabsState = 1;
-    boolean AddSave = false;
-    int openPicType=0;
+    private int showHideFabs = 0;
+    private int fabsState = 1;
+    private boolean AddSave = false;
+    private int openPicType=0;
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
     private static final int REQUEST_TAKE_PICTURE = 1;
@@ -65,8 +62,9 @@ public class  EditorActivity extends AppCompatActivity
     public static final String NOTE_URI = "note_uri";
     public static final String NOTE_TITLE = "note_title";
     public static final String NOTE_INFO = "note_info";
+    public static final String NOTE_ID = "note_id";
 
-    String mCurrentPhotoPath;
+    private String mCurrentPhotoPath;
     private DrawingViewFragment drawingViewFragment;
 
     @Override
@@ -105,17 +103,11 @@ public class  EditorActivity extends AppCompatActivity
         transaction.commit(); // causes DetailFragment to display
     }
 
-
     public View.OnClickListener fab1_ChangeListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-                //enter in loading image with existing note by image name
-                fabMenu.close(true);
-                openPicType = 0;
-                onPickPhoto(view);
-                setDrawingViewPhotoUri();// set Photo Uri that was Loaded for loading notes
-                drawingViewFragment.setLoadEditState(true);
-                drawingViewFragment.setDrawingViewlistener(changeListener);
+            //delete all notes
+            //that saves with with photo uri name
 
         }
     };
@@ -123,16 +115,11 @@ public class  EditorActivity extends AppCompatActivity
         @Override
         public void onClick(View view) {
             //Listen for Opening New Image
-            //Fixed in every State of App
-            fabEdit.setVisibility(View.VISIBLE);
-            ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
             fabMenu.close(false);
             openPicType = 0;
             onPickPhoto(view);
-            drawingViewFragment.setLoadEditState(true);
-            drawingViewFragment.setDrawingViewlistener(changeListener);
-            //Ask question for loading previous notes   ????????????
-            // drawingViewFragment.setLoaderManager();// load previous note by the opened image
+            //Ask question for loading previous notes
+            // ????????????
         }
     };
 
@@ -140,13 +127,9 @@ public class  EditorActivity extends AppCompatActivity
         @Override
         public void onClick(final View view) {
             //Take Picture via Camera and save it
-            fabEdit.setVisibility(View.VISIBLE);
-            ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
             fabMenu.close(false);
             openPicType = 1;
             dispatchTakePicture();
-            drawingViewFragment.setLoadEditState(true);
-            drawingViewFragment.setDrawingViewlistener(changeListener);
         }
     };
 
@@ -159,23 +142,27 @@ public class  EditorActivity extends AppCompatActivity
                 fabMenu.showMenu(true);
                 ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
                 //open AddEdit Fragment for saving details
-                setAddEditDetailsFragment(null);
+                setAddEditDetailsFragment(null, photoUri);
                 drawingViewFragment.setLoadEditState(true);
             }
             else {
-                AddSave = true;
-                //Activating drawingView TouchEvent for drawing line (Adding new Note)
                 fabMenu.hideMenu(true);
-                //Extra work for sure
-                //in this state the icons not change
                 drawingViewFragment.setLoadEditState(false);
-                //creating new FloatingActionButton for saving new note
-                //change icon
+                //after line is create and noting is wrong
+                //next step
                 ButtonChangeIcon(fabEdit, R.drawable.ic_done_black_24);
-
+                fabEdit.setEnabled(false);
+                AddSave = true;
             }
         }
     };
+
+    public void showFabEditButton(){
+        if(photoUri != null)
+            fabEdit.setVisibility(View.VISIBLE);
+            ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
+    }
+
     private void ButtonChangeIcon(FloatingActionButton button, int drawable){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             button.setImageDrawable(getResources().getDrawable(drawable, getBaseContext().getTheme()));
@@ -185,9 +172,14 @@ public class  EditorActivity extends AppCompatActivity
         }
     }
 
-    private void setAddEditDetailsFragment(Bundle arguments){
+    private void setAddEditDetailsFragment(Bundle arguments, Uri uri){
 
         AddEditDetailsFragment detailFragment = new AddEditDetailsFragment();
+
+        //            if(photoUri != null)
+        // Photo Uri in this Step
+        // cannot be null for Sure
+        arguments.putParcelable(NOTE_URI , uri);
 
         if (arguments != null)
             detailFragment.setArguments(arguments);
@@ -199,9 +191,12 @@ public class  EditorActivity extends AppCompatActivity
         transaction.commit(); // causes DetailFragment to display
     }
 
-    public void setDrawingViewPhotoUri(){
+    public void setDrawingView(){
         drawingViewFragment.clearDrawingView();
         drawingViewFragment.setPhotoUri(photoUri);
+
+        drawingViewFragment.setLoadEditState(true);
+        drawingViewFragment.setDrawingViewlistener(changeListener);
 
         //call it for Loading info by photoUri
         drawingViewFragment.getLoaderManager()
@@ -273,7 +268,9 @@ public class  EditorActivity extends AppCompatActivity
                 try {
                     selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                     //setting photoUri for drawingFragment
-                    setDrawingViewPhotoUri();
+                    setDrawingView();
+                    //show FabEdit for adding Note
+                    showFabEditButton();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -303,9 +300,11 @@ public class  EditorActivity extends AppCompatActivity
                             imageView.setImageBitmap(bitmap);
                             Toast.makeText(this, selectedImage.toString(),
                                     Toast.LENGTH_LONG).show();
-
-                            setDrawingViewPhotoUri();
+                            //setting photoUri for drawingFragment
+                            setDrawingView();
                             galleryAddPic();
+                            //show FabEdit for adding Note
+                            showFabEditButton();
                         } catch (Exception e) {
                             Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
                                     .show();
@@ -379,23 +378,40 @@ public class  EditorActivity extends AppCompatActivity
         drawingViewFragment.setDrawingViewlistener(changeListener);
     }
 
-    private OnNoteTouchedListener changeListener = new OnNoteTouchedListener()
-    {
+    @Override
+    public void onNoteDeleted() {
+
+    }
+
+    private DrawingView.DrawingViewListener changeListener = new DrawingView.DrawingViewListener() {
         @Override
-        public void onNoteTouched(String title, String info) {
+        public void onNoteTouched(String title, String info , int id) {
 
             Log.d(TAG , " onNoteTouched event ,  title : " + title);
             Log.d(TAG , " onNoteTouched event ,  info : " + info);
             //initial argm for editing last notes
-
             Bundle arguments = new Bundle();
             //if(title == null && info == null)
-
             arguments.putString(NOTE_TITLE,title);
             arguments.putString(NOTE_INFO , info);
+            arguments.putInt(NOTE_ID , id);
 
-            setAddEditDetailsFragment(arguments);
+            setAddEditDetailsFragment(arguments, photoUri);
         }
 
+        @Override
+        public void onDrawLineDetected(boolean detected){
+             if(detected ) {
+                fabEdit.setEnabled(true);
+            }
+            else{
+                fabEdit.setEnabled(false);
+            }
+        }
     };
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }

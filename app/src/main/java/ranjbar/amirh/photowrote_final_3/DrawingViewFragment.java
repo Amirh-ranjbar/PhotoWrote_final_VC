@@ -71,8 +71,8 @@ public class DrawingViewFragment extends Fragment
         drawingView.setLoadEditType(state);// true for loading && false for editing
     }
 
-    public void setDrawingViewlistener(DrawingView.OnNoteTouchedListener l) {
-        drawingView.setOnNoteTouchedListener(l);
+    public void setDrawingViewlistener(DrawingView.DrawingViewListener l) {
+        drawingView.setDrawingViewListener(l);
     }
 
     public void clearDrawingView(){
@@ -131,6 +131,7 @@ public class DrawingViewFragment extends Fragment
                 if (name != null && !name.isEmpty()) {
                     if (name.equals(photoUri.getLastPathSegment())) {
                         // get the column index for each data item
+                        int idIndex = data.getColumnIndex(Note._ID);
                         int pointX1Index = data.getColumnIndex(Note.COLUMN_POINTX1);
                         int pointY1Index = data.getColumnIndex(Note.COLUMN_POINTY1);
                         int pointX2Index = data.getColumnIndex(Note.COLUMN_POINTX2);
@@ -138,6 +139,7 @@ public class DrawingViewFragment extends Fragment
                         int titleIndex = data.getColumnIndex(Note.COLUMN_TITLE);
                         int infoIndex = data.getColumnIndex(Note.COLUMN_INFO);
 
+                        int id = Integer.valueOf(data.getString(idIndex));
                         float pointX1 = Float.valueOf(data.getString(pointX1Index));
                         float pointY1 = Float.valueOf(data.getString(pointY1Index));
                         float pointX2 = Float.valueOf(data.getString(pointX2Index));
@@ -154,7 +156,7 @@ public class DrawingViewFragment extends Fragment
 
                         float p[] = {pointX1, pointY1, pointX2, pointY2};
 
-                        drawingView.setArrayOfPoints(p, title, info);
+                        drawingView.setArrayOfPoints(p, title, info , id);
                         drawingView.postInvalidate();
                         Canvas canvas = new Canvas();
                         Paint paint = drawingView.getDrawPaint();
@@ -170,9 +172,7 @@ public class DrawingViewFragment extends Fragment
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
+    public void onLoaderReset(Loader<Cursor> loader) { }
 
 
 }

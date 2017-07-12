@@ -13,5 +13,9 @@
         <string name="note_not_added">Note was not added due to an error</string>
         <string name="note_updated">Note updated</string>
         <string name="note_not_updated">Note was not updated due to an error</string>
+        <string name="confirm_title">Are You Sure?</string>
+        <string name="confirm_message">This will permanently delete the Note</string>
+        <string name="button_cancel">Cancel</string>
+        <string name="button_delete">Delete</string>
 
 </resources>

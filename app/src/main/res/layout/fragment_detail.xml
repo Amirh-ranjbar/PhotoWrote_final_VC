@@ -1,43 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_light">
+    android:background="@color/primary_light"
+    android:translationZ="3dp"
+    android:elevation="20dp">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical" android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:id="@+id/previewImageShow"
+                    android:src="@drawable/tehran"
+                    android:scaleType="fitXY"
+                    android:alpha=".8" />
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="120dp"
+                    android:text="Preview  of Image Selected For Note"
+                    android:textSize="30dp"
+                    android:fontFamily="cursive"
+                    android:layout_marginLeft="@dimen/image_view_margin"
+                    android:layout_marginRight="@dimen/image_view_margin"
+                    android:layout_marginTop="@dimen/activity_margin"
+                    android:gravity="center" />
+            </RelativeLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/activity_margin">
+
+            <TextView
+                android:layout_marginLeft="@dimen/edittext_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Subject"
+                android:textSize="30dp"
+                android:fontFamily="cursive"
+                android:id="@+id/subjectTextView"
+                />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:id="@+id/titleEditText"
-                android:inputType="textShortMessage" />
+                android:inputType="textShortMessage"
+                android:background="@xml/bg_edittext"
+                android:layout_margin="@dimen/edittext_margin"
+                android:padding="@dimen/edittext_padding"
+                android:singleLine="true" />
 
-            <android.support.design.widget.TextInputLayout
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/infoTextInput">
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/activity_margin">
+
+                <TextView
+                    android:layout_marginLeft="@dimen/edittext_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Note"
+                    android:textSize="30dp"
+                    android:fontFamily="cursive"
+                    android:id="@+id/infoTextView"
+                    />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/infoEditText" />
+                    android:ems="10"
+                    android:id="@+id/infoEditText"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:background="@xml/bg_edittext"
+                    android:layout_margin="@dimen/edittext_margin"
+                    android:padding="@dimen/edittext_padding"
+                    android:maxLength="2000"
+                    android:maxLines="3" />
 
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:text="Save"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/saveChangesButton"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fabDetailFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/fab_margin"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true"
+        fab:menu_shadowColor="@color/primary_dark"
+        fab:menu_colorNormal="@color/accent4"
+        fab:menu_colorPressed="@color/accent4"
+        fab:menu_colorRipple="@color/accent4">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/addItemButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_label="Add Item" />
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/deleteNoteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_label="Delete" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/saveChangesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_label="Save" />
+
+
+    </com.github.clans.fab.FloatingActionMenu>
+
 </FrameLayout>
