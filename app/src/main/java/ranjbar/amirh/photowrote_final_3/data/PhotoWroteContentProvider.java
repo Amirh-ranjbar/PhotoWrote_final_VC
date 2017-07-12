@@ -177,7 +177,7 @@ public class PhotoWroteContentProvider extends ContentProvider {
                 Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , CONTACTS ::: " + uri);
 
                 numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
-                        Note.TABLE_NAME, Note._ID + "=" + selection, selectionArgs);
+                        Note.TABLE_NAME, Note.COLUMN_NAME + "=" + selection , selectionArgs);
 
                 break;
             default:

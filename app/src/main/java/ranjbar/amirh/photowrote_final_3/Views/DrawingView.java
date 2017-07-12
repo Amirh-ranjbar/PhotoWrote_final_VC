@@ -47,7 +47,6 @@ public class DrawingView extends View{
     private ArrayList<Path> pathArrayList = new ArrayList<>();
     private ArrayList<String> titleArrayList = new ArrayList<>();
     private ArrayList<String> infoArrayList = new ArrayList<>();
-    private ArrayList<Integer> idArrayList = new ArrayList<>();
     private boolean loadEditType= true;//Enter in Load Mode by defualt
 
     public DrawingView(Context context , AttributeSet attrs) {
@@ -65,7 +64,7 @@ public class DrawingView extends View{
     }
 
     public interface DrawingViewListener{
-        void onNoteTouched(String title , String info , int id);
+        void onNoteTouched(String title , String info );
         void onDrawLineDetected(boolean detected);
     }
 
@@ -90,7 +89,7 @@ public class DrawingView extends View{
         photoUri = uri;
     }
 
-    public void setArrayOfPoints(float p[], String title , String info , int id) {
+    public void setArrayOfPoints(float p[], String title , String info ) {
         pointX1 = p[0];
         pointY1 = p[1];
         pointX2 = p[2];
@@ -105,7 +104,6 @@ public class DrawingView extends View{
 
         infoArrayList.add(info);
 
-        idArrayList.add(id);
 
         Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
         Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
@@ -124,7 +122,6 @@ public class DrawingView extends View{
         pathArrayList.clear();
         titleArrayList.clear();
         infoArrayList.clear();
-        idArrayList.clear();
         pointX1 = pointY1 = pointX2 = pointY2 = 0;
         invalidate();
     }
@@ -240,8 +237,7 @@ public class DrawingView extends View{
 
                             drawingViewListener.onNoteTouched(
                                     titleArrayList.get(cnt),
-                                    infoArrayList.get(cnt),
-                                    idArrayList.get(cnt));
+                                    infoArrayList.get(cnt));
                         }
                     }
                     else  {
@@ -259,8 +255,7 @@ public class DrawingView extends View{
 
                             drawingViewListener.onNoteTouched(
                                     titleArrayList.get(cnt),
-                                    infoArrayList.get(cnt),
-                                    idArrayList.get(cnt));     }
+                                    infoArrayList.get(cnt));     }
                     }
                 }
             }
@@ -325,6 +320,7 @@ public class DrawingView extends View{
                     titleArrayList.add(title);
 
                     infoArrayList.add(info);
+
 
                     // use Activity's ContentResolver to invoke
                     // insert on the PhotoWroteContentProvider

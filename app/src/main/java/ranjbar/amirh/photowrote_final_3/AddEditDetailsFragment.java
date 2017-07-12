@@ -1,14 +1,12 @@
 package ranjbar.amirh.photowrote_final_3;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
+
+import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription.Note;
 
 import static android.content.ContentValues.TAG;
 
@@ -34,7 +34,7 @@ public class AddEditDetailsFragment extends Fragment {
 
     private String noteTitle;
     private String noteInfo;
-    private int noteId;
+    private String noteId;
     private Uri photoUri;
 
     public interface AddEditDetailFragmentListener{
@@ -91,11 +91,18 @@ public class AddEditDetailsFragment extends Fragment {
             if (noteInfo !=null)
                 infoEditText.setText(noteInfo);
 
-            noteId = arguments.getInt(EditorActivity.NOTE_ID);
+            if (noteId == null){
+                //delete note
+                //via clearing drawingView last Path
+
+            }
+            else{
+                //delete note
+                //via deleting from DataBase
+
+            }
             photoUri = arguments.getParcelable(EditorActivity.NOTE_URI);
 
-//            if(photoUri == null)
-                //image cannot be accessed
         }
         return view;
     }
@@ -119,37 +126,29 @@ public class AddEditDetailsFragment extends Fragment {
 
             Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde : delete note :" );
 
-            confirmDelete.show(getActivity().getSupportFragmentManager() , "confirm delete" );
+//            confirmDelete.show(getActivity().getSupportFragmentManager() , "confirm delete" );
 
-        }
-    };
-
-    // DialogFragment to confirm deletion of Note
-    public final DialogFragment confirmDelete = new DialogFragment() {
-        // create an AlertDialog and return it
-        @Override
-        public Dialog onCreateDialog(Bundle bundle) {
-            // create a new AlertDialog Builder
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.confirm_title);
-            builder.setMessage(R.string.confirm_message);
-            // provide an OK button that simply dismisses the dialog
-            builder.setPositiveButton(R.string.button_delete,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(
-                                DialogInterface dialog, int button) {
-                            // use Activity's ContentResolver to invoke
-                            // delete on the AddressBookContentProvider
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(getContext());
+            }
+            builder.setTitle("Delete Note")
+                    .setMessage("Are you sure you want to delete this Note?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
                             getActivity().getContentResolver().delete(
-                                    photoUri, String.valueOf(noteId) , null);
+                                   Note.CONTENT_URI, photoUri.getLastPathSegment() + ","  , null);
                             detailFragmentListener.onNoteDeleted(); // notify listener
                         }
-                    }
-            );
-            builder.setNegativeButton(R.string.button_cancel, null);
-            return builder.create(); // return the AlertDialog
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
+            detailFragmentListener.onNoteDeleted();
         }
     };
 

@@ -62,7 +62,6 @@ public class  EditorActivity extends AppCompatActivity
     public static final String NOTE_URI = "note_uri";
     public static final String NOTE_TITLE = "note_title";
     public static final String NOTE_INFO = "note_info";
-    public static final String NOTE_ID = "note_id";
 
     private String mCurrentPhotoPath;
     private DrawingViewFragment drawingViewFragment;
@@ -179,10 +178,18 @@ public class  EditorActivity extends AppCompatActivity
         //            if(photoUri != null)
         // Photo Uri in this Step
         // cannot be null for Sure
-        arguments.putParcelable(NOTE_URI , uri);
 
-        if (arguments != null)
+        if (arguments != null) {
+            arguments.putParcelable(NOTE_URI , uri);
             detailFragment.setArguments(arguments);
+        }
+        else{
+            arguments = new Bundle();
+            arguments.putParcelable(NOTE_URI , uri);
+            arguments.putString(NOTE_TITLE,null);
+            arguments.putString(NOTE_INFO , null);
+            detailFragment.setArguments(arguments);
+        }
 
         FragmentTransaction transaction =
                 getSupportFragmentManager().beginTransaction();
@@ -381,11 +388,19 @@ public class  EditorActivity extends AppCompatActivity
     @Override
     public void onNoteDeleted() {
 
+        Log.d(TAG , "mameeeeeeeeee gonde , onNoteDeleted : title :" );
+
+        getSupportFragmentManager().popBackStack();
+        drawingViewFragment.getLoaderManager()
+                .restartLoader(DrawingViewFragment.NOTE_LOADER
+                        , null,
+                        drawingViewFragment.getLoaderCallBack());
+        drawingViewFragment.setDrawingViewlistener(changeListener);
     }
 
     private DrawingView.DrawingViewListener changeListener = new DrawingView.DrawingViewListener() {
         @Override
-        public void onNoteTouched(String title, String info , int id) {
+        public void onNoteTouched(String title, String info) {
 
             Log.d(TAG , " onNoteTouched event ,  title : " + title);
             Log.d(TAG , " onNoteTouched event ,  info : " + info);
@@ -394,7 +409,6 @@ public class  EditorActivity extends AppCompatActivity
             //if(title == null && info == null)
             arguments.putString(NOTE_TITLE,title);
             arguments.putString(NOTE_INFO , info);
-            arguments.putInt(NOTE_ID , id);
 
             setAddEditDetailsFragment(arguments, photoUri);
         }
