@@ -163,21 +163,97 @@ public class PhotoWroteContentProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int numberOfRowsDeleted =0;
 
+        Log.d(TAG , " delete Note , selection  : " + selection);
+
+
+        int pointX1Index = selection.indexOf(",");
+        String pointX1 = selection.substring(0 , pointX1Index);
+
+        selection=  selection.replaceFirst(pointX1 + "," , "");
+
+        Log.d(TAG , " delete Note , pointX1Index  :: " + pointX1Index);
+        Log.d(TAG , " delete Note , pointX1  :: " + pointX1);
+        Log.d(TAG , " delete Note , selection  :: " + selection);
+
+        int pointY1Index = selection.indexOf(",");
+        String pointY1 = selection.substring(0 , pointY1Index);
+
+        selection= selection.replaceFirst(pointY1 + "," , "");
+
+        Log.d(TAG , " delete Note , pointY1Index  ::: " + pointY1Index);
+        Log.d(TAG , " delete Note , pointY1  ::: " + pointY1);
+        Log.d(TAG , " delete Note , selection  ::: " + selection);
+
+        int pointX2Index = selection.indexOf(",");
+        String pointX2 = selection.substring(0 , pointX2Index);
+
+        selection= selection.replaceFirst(pointX2 + "," , "");
+
+        Log.d(TAG , " delete Note , pointX2Index  :::: " + pointX2Index);
+        Log.d(TAG , " delete Note , pointX2  :::: " + pointX2);
+        Log.d(TAG , " delete Note , selection  :::: " + selection);
+
+        int pointY2Index = selection.indexOf(",");
+        String pointY2 = selection.substring(0 , pointY2Index);
+
+        selection= selection.replaceFirst(pointY2 + "," , "");
+
+        Log.d(TAG , " delete Note , pointY2Index  ::::: " + pointY2Index);
+        Log.d(TAG , " delete Note , pointY2  ::::: " + pointY2);
+        Log.d(TAG , " delete Note , selection  ::::: " + selection);
+
+//        int noteNameIndex = selection.indexOf(",");
+//        String noteName = selection.substring(0 , noteNameIndex);
+//
+//        selection = selection.replaceFirst(noteName + "," ,"");
+
+//        Log.d(TAG , " delete Note , noteNameIndex  : " + noteNameIndex);
+
+        String noteName = selection ;
+
+        Log.d(TAG , " delete Note , noteName  : " + noteName);
+        Log.d(TAG , " delete Note , selection  : " + selection);
+
         switch (uriMatcher.match(uri)) {
             case ONE_CONTACT:
                 Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , ONE_CONTACT  :: " + uri);
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , selection ::: " + selection);
+
                 // get from the Selection the id of Note to update
 //                String noteName = uri.getLastPathSegment();
 
+
                 // delete the Note
+//                numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
+//                        Note.TABLE_NAME, Note.COLUMN_NAME + "=" + selection, selectionArgs);
+
                 numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
-                        Note.TABLE_NAME, Note._ID + "=" + selection, selectionArgs);
+                        Note.TABLE_NAME ,
+                        Note.COLUMN_POINTX1 + "=" + String.valueOf(pointX1) , null );
+
+
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , numberOfRowsDeleted ::: " + numberOfRowsDeleted);
+
                 break;
             case CONTACTS:
                 Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , CONTACTS ::: " + uri);
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , selection ::: " + selection);
+
+
+//                numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
+//                        Note.TABLE_NAME , Note.COLUMN_NAME + "=? and " + Note.COLUMN_POINTX1 + "=?" ,
+//                        new String[]{noteName , pointX1});
+
+//                numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
+//                        Note.TABLE_NAME ,
+//                        Note.COLUMN_NAME + "=" + noteName , null );
 
                 numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
-                        Note.TABLE_NAME, Note.COLUMN_NAME + "=" + selection , selectionArgs);
+                        Note.TABLE_NAME ,
+                        Note.COLUMN_NAME + "=555"  , null );
+
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , point ::: " + pointX1);
+                Log.d(TAG , " on Delete Note , PhotoWroteContentProvider , numberOfRowsDeleted ::: " + numberOfRowsDeleted);
 
                 break;
             default:

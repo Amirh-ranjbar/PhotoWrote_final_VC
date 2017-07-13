@@ -59,9 +59,12 @@ public class  EditorActivity extends AppCompatActivity
     private static final int CAMERA_REQUEST = 1888;
     private static final String AUTHORITY=
             BuildConfig.APPLICATION_ID+".provider";
+
     public static final String NOTE_URI = "note_uri";
     public static final String NOTE_TITLE = "note_title";
     public static final String NOTE_INFO = "note_info";
+    public static final String NOTE_PATH = "note_path";
+    public static final String NOTE_ID = "note_id";
 
     private String mCurrentPhotoPath;
     private DrawingViewFragment drawingViewFragment;
@@ -188,6 +191,7 @@ public class  EditorActivity extends AppCompatActivity
             arguments.putParcelable(NOTE_URI , uri);
             arguments.putString(NOTE_TITLE,null);
             arguments.putString(NOTE_INFO , null);
+            arguments.putFloatArray(NOTE_PATH , null);
             detailFragment.setArguments(arguments);
         }
 
@@ -391,6 +395,8 @@ public class  EditorActivity extends AppCompatActivity
         Log.d(TAG , "mameeeeeeeeee gonde , onNoteDeleted : title :" );
 
         getSupportFragmentManager().popBackStack();
+
+        drawingViewFragment.clearDrawingView();
         drawingViewFragment.getLoaderManager()
                 .restartLoader(DrawingViewFragment.NOTE_LOADER
                         , null,
@@ -400,7 +406,7 @@ public class  EditorActivity extends AppCompatActivity
 
     private DrawingView.DrawingViewListener changeListener = new DrawingView.DrawingViewListener() {
         @Override
-        public void onNoteTouched(String title, String info) {
+        public void onNoteTouched(String title, String info , float[] path , int id) {
 
             Log.d(TAG , " onNoteTouched event ,  title : " + title);
             Log.d(TAG , " onNoteTouched event ,  info : " + info);
@@ -409,6 +415,8 @@ public class  EditorActivity extends AppCompatActivity
             //if(title == null && info == null)
             arguments.putString(NOTE_TITLE,title);
             arguments.putString(NOTE_INFO , info);
+            arguments.putFloatArray(NOTE_PATH , path);
+            arguments.putInt(NOTE_ID , id);
 
             setAddEditDetailsFragment(arguments, photoUri);
         }

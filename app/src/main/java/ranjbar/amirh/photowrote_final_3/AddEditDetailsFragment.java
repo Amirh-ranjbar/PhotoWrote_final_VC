@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
 
-import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription.Note;
+import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription;
 
 import static android.content.ContentValues.TAG;
 
@@ -34,7 +34,7 @@ public class AddEditDetailsFragment extends Fragment {
 
     private String noteTitle;
     private String noteInfo;
-    private String noteId;
+    private float[] notePath;
     private Uri photoUri;
 
     public interface AddEditDetailFragmentListener{
@@ -91,16 +91,18 @@ public class AddEditDetailsFragment extends Fragment {
             if (noteInfo !=null)
                 infoEditText.setText(noteInfo);
 
-            if (noteId == null){
-                //delete note
-                //via clearing drawingView last Path
+            notePath = arguments.getFloatArray(EditorActivity.NOTE_PATH);
+            if (notePath == null){
 
             }
-            else{
-                //delete note
-                //via deleting from DataBase
+            else {
 
             }
+            //delete note
+            //via clearing drawingView last Path
+            //OR
+            //delete note
+            //via deleting from DataBase
             photoUri = arguments.getParcelable(EditorActivity.NOTE_URI);
 
         }
@@ -139,8 +141,23 @@ public class AddEditDetailsFragment extends Fragment {
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // continue with delete
+                            Log.d(TAG , " kiriiiiiiiiiii ,  : " + photoUri);
+                            Log.d(TAG , " kiriiiiiiiiiii ,  : " + photoUri.getLastPathSegment());
+
+                            //if One_Note
+                            String concat = String.valueOf(notePath[0]) +
+                                    "," + String.valueOf(notePath[1]) +
+                                    "," + String.valueOf(notePath[2]) +
+                                    "," + String.valueOf(notePath[3]) +
+                                    "," + photoUri.getLastPathSegment();
+
                             getActivity().getContentResolver().delete(
-                                   Note.CONTENT_URI, photoUri.getLastPathSegment() + ","  , null);
+                                    DataBaseDescription.Note.CONTENT_URI, concat , null);
+
+                            //if All_Notes
+//                            getActivity().getContentResolver().delete(
+//                                    Note.CONTENT_URI, photoUri.getLastPathSegment() , null);
+
                             detailFragmentListener.onNoteDeleted(); // notify listener
                         }
                     })
@@ -148,7 +165,7 @@ public class AddEditDetailsFragment extends Fragment {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
 
-            detailFragmentListener.onNoteDeleted();
+//            detailFragmentListener.onNoteDeleted();
         }
     };
 

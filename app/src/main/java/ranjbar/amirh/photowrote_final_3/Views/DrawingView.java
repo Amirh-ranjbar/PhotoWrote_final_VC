@@ -41,6 +41,8 @@ public class DrawingView extends View{
     private float pointX2 ;
     private float pointY2 ;
 
+    private int idCounter =0 ;
+
     private int desiredWidth =100;
     private int desiredHeight = 100;
     // stores next path
@@ -64,7 +66,7 @@ public class DrawingView extends View{
     }
 
     public interface DrawingViewListener{
-        void onNoteTouched(String title , String info );
+        void onNoteTouched(String title , String info , float[] path , int id );
         void onDrawLineDetected(boolean detected);
     }
 
@@ -104,10 +106,11 @@ public class DrawingView extends View{
 
         infoArrayList.add(info);
 
+        idCounter++;
 
-        Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
-        Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
-        Log.d(TAG, "Set Array of infos , index:    " + infoArrayList.indexOf(info));
+//        Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
+//        Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
+//        Log.d(TAG, "Set Array of infos , index:    " + infoArrayList.indexOf(info));
 
     }
 
@@ -160,7 +163,7 @@ public class DrawingView extends View{
 
             drawingViewListener.onDrawLineDetected(true);
         }
-        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onDraw paths :  :" );
+//        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onDraw paths :  :" );
 
         for(Path p : pathArrayList ) {
 
@@ -210,7 +213,7 @@ public class DrawingView extends View{
                 for(int cnt=0 ; cnt< pathArrayList.size() ; cnt++ ) {
                     p = pathArrayList.get(cnt);
 
-                    Log.d(TAG, " points   : " + pX + " + " + pY);
+//                    Log.d(TAG, " points   : " + pX + " + " + pY);
 
                     pmStart = new PathMeasure(p, false);
                     pmStart.getPosTan(0, startPoint, null);
@@ -218,10 +221,10 @@ public class DrawingView extends View{
                     pmEnd = new PathMeasure(p, false);
                     pmEnd.getPosTan(pmEnd.getLength(), endPoint, null);
 
-                    Log.d(TAG, " point  pX >  : " + (endPoint[0] - noteImageBitmap.getWidth()));
-                    Log.d(TAG, " point  pX <  : " + endPoint[0]);
-                    Log.d(TAG, " point  pY >  : " + (endPoint[1] - noteImageBitmap.getHeight()));
-                    Log.d(TAG, " point  pY <  : " + endPoint[1]);
+//                    Log.d(TAG, " point  pX >  : " + (endPoint[0] - noteImageBitmap.getWidth()));
+//                    Log.d(TAG, " point  pX <  : " + endPoint[0]);
+//                    Log.d(TAG, " point  pY >  : " + (endPoint[1] - noteImageBitmap.getHeight()));
+//                    Log.d(TAG, " point  pY <  : " + endPoint[1]);
 
                     if (startPoint[0] < endPoint[0]) {
                         if (pX > startPoint[0]
@@ -232,12 +235,18 @@ public class DrawingView extends View{
                             //call the detailFragment
                             //need DrawingView interface that implement in EditorActivity
 
-                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
-                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
+//                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
+//                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
+
+                            float[] points = {startPoint[0],startPoint[1] , endPoint[0] , endPoint[1]};
+
+                            Log.d(TAG, " pointsssssssssssssssss   : " + startPoint[0] + " + " + startPoint[1]);
+                             Log.d(TAG, " pointssssssssssssssss   : " + endPoint[0] + " + " + endPoint[1]);
 
                             drawingViewListener.onNoteTouched(
                                     titleArrayList.get(cnt),
-                                    infoArrayList.get(cnt));
+                                    infoArrayList.get(cnt),
+                                    points, cnt);
                         }
                     }
                     else  {
@@ -249,13 +258,20 @@ public class DrawingView extends View{
                             //call the detailFragment
                             //need DrawingView interface that implement in EditorActivity
 
-                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
-                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
+//                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
+//                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
 
+
+                            float[] points = {startPoint[0],startPoint[1] , endPoint[0] , endPoint[1]};
+
+                            Log.d(TAG, " pointssssssssssssssss   : " + startPoint[0] + " + " + startPoint[1]);
+                            Log.d(TAG, " pointsssssssssssssss   : " + endPoint[0] + " + " + endPoint[1]);
 
                             drawingViewListener.onNoteTouched(
                                     titleArrayList.get(cnt),
-                                    infoArrayList.get(cnt));     }
+                                    infoArrayList.get(cnt),
+                                    points , cnt);
+                        }
                     }
                 }
             }
@@ -294,13 +310,14 @@ public class DrawingView extends View{
                     Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
             } else  {
 
-                Log.d(TAG, " points   : " + pointX1 + " + " + pointY1);
-                Log.d(TAG, " points   : " + pointX2 + " + " + pointY2);
-                Log.d(TAG, " title   :::::::: " + title);
-                Log.d(TAG, " info   :::::::: " + info);
-                Log.d(TAG, " Photo Name , lastSegment : " + photoUri.getLastPathSegment());
+//                Log.d(TAG, " points   : " + pointX1 + " + " + pointY1);
+//                Log.d(TAG, " points   : " + pointX2 + " + " + pointY2);
+//                Log.d(TAG, " title   :::::::: " + title);
+//                Log.d(TAG, " info   :::::::: " + info);
+//                Log.d(TAG, " Photo Name , lastSegment : " + photoUri.getLastPathSegment());
                 // create ContentValues object containing    contact's key-value pairs
                 ContentValues contentValues = new ContentValues();
+
                 contentValues.put(Note.COLUMN_NAME, photoUri.getLastPathSegment());
                 contentValues.put(Note.COLUMN_POINTX1, pointX1);
                 contentValues.put(Note.COLUMN_POINTY1, pointY1);
@@ -321,6 +338,8 @@ public class DrawingView extends View{
 
                     infoArrayList.add(info);
 
+                    idCounter++;
+                    contentValues.put(Note._ID, idCounter);
 
                     // use Activity's ContentResolver to invoke
                     // insert on the PhotoWroteContentProvider
