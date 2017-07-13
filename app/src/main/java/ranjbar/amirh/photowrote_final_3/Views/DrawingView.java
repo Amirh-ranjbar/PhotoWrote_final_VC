@@ -41,7 +41,6 @@ public class DrawingView extends View{
     private float pointX2 ;
     private float pointY2 ;
 
-    private int idCounter =0 ;
 
     private int desiredWidth =100;
     private int desiredHeight = 100;
@@ -66,7 +65,7 @@ public class DrawingView extends View{
     }
 
     public interface DrawingViewListener{
-        void onNoteTouched(String title , String info , float[] path , int id );
+        void onNoteTouched(String title , String info);
         void onDrawLineDetected(boolean detected);
     }
 
@@ -106,11 +105,18 @@ public class DrawingView extends View{
 
         infoArrayList.add(info);
 
-        idCounter++;
+        Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
+        Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
+        Log.d(TAG, "Set Array of infos , index:    " + infoArrayList.indexOf(info));
 
-//        Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
-//        Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
-//        Log.d(TAG, "Set Array of infos , index:    " + infoArrayList.indexOf(info));
+        for(int i=0 ; i< pathArrayList.size() ; i++)
+            Log.d(TAG, "Set Array of paths , "+ i + "  :  " + pathArrayList.get(i));
+
+        for(int i=0 ; i< titleArrayList.size() ; i++)
+            Log.d(TAG, "Set Array of title , "+ i + "  :  " + titleArrayList.get(i));
+
+        for(int i=0 ; i< infoArrayList.size() ; i++)
+            Log.d(TAG, "Set Array of info , "+ i + "  :  " + infoArrayList.get(i));
 
     }
 
@@ -126,6 +132,9 @@ public class DrawingView extends View{
         titleArrayList.clear();
         infoArrayList.clear();
         pointX1 = pointY1 = pointX2 = pointY2 = 0;
+        Log.d(TAG , " on clear Drawing View , path : "+ pathArrayList.size());
+        Log.d(TAG , " on clear Drawing View , title : "+ titleArrayList.size());
+        Log.d(TAG , " on clear Drawing View  , info  : "+ infoArrayList.size());
         invalidate();
     }
 
@@ -163,7 +172,7 @@ public class DrawingView extends View{
 
             drawingViewListener.onDrawLineDetected(true);
         }
-//        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onDraw paths :  :" );
+        Log.d(TAG , "onDrawwwwwwwwww paths :  :" );
 
         for(Path p : pathArrayList ) {
 
@@ -238,15 +247,9 @@ public class DrawingView extends View{
 //                            Log.d(TAG, "before onNoteTouched event ,  title : " + titleArrayList.get(cnt));
 //                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
 
-                            float[] points = {startPoint[0],startPoint[1] , endPoint[0] , endPoint[1]};
-
-                            Log.d(TAG, " pointsssssssssssssssss   : " + startPoint[0] + " + " + startPoint[1]);
-                             Log.d(TAG, " pointssssssssssssssss   : " + endPoint[0] + " + " + endPoint[1]);
-
                             drawingViewListener.onNoteTouched(
                                     titleArrayList.get(cnt),
-                                    infoArrayList.get(cnt),
-                                    points, cnt);
+                                    infoArrayList.get(cnt));
                         }
                     }
                     else  {
@@ -262,15 +265,9 @@ public class DrawingView extends View{
 //                            Log.d(TAG, "before  onNoteTouched event ,  info : " + infoArrayList.get(cnt));
 
 
-                            float[] points = {startPoint[0],startPoint[1] , endPoint[0] , endPoint[1]};
-
-                            Log.d(TAG, " pointssssssssssssssss   : " + startPoint[0] + " + " + startPoint[1]);
-                            Log.d(TAG, " pointsssssssssssssss   : " + endPoint[0] + " + " + endPoint[1]);
-
                             drawingViewListener.onNoteTouched(
                                     titleArrayList.get(cnt),
-                                    infoArrayList.get(cnt),
-                                    points , cnt);
+                                    infoArrayList.get(cnt));
                         }
                     }
                 }
@@ -337,9 +334,6 @@ public class DrawingView extends View{
                     titleArrayList.add(title);
 
                     infoArrayList.add(info);
-
-                    idCounter++;
-                    contentValues.put(Note._ID, idCounter);
 
                     // use Activity's ContentResolver to invoke
                     // insert on the PhotoWroteContentProvider

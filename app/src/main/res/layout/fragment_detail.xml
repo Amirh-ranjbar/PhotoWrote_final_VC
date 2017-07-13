@@ -139,6 +139,12 @@
             fab:fab_size="mini"
             fab:fab_label="Save" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_label="Back" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

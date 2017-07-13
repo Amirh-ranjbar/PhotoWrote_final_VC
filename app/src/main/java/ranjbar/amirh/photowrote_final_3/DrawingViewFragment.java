@@ -1,15 +1,15 @@
 package ranjbar.amirh.photowrote_final_3;
 
+import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import ranjbar.amirh.photowrote_final_3.Views.DrawingView;
+import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription;
 import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription.Note;
 
 import static android.content.ContentValues.TAG;
@@ -156,11 +157,11 @@ public class DrawingViewFragment extends Fragment
 
                         drawingView.setArrayOfPoints(p, title, info );
                         drawingView.postInvalidate();
-                        Canvas canvas = new Canvas();
-                        Paint paint = drawingView.getDrawPaint();
-                        paint.setColor(Color.RED);
-                        canvas.drawLine(pointX1, pointY1, pointX2, pointY2, paint);
-                        drawingView.draw(canvas);
+//                        Canvas canvas = new Canvas();
+//                        Paint paint = drawingView.getDrawPaint();
+//                        paint.setColor(Color.RED);
+//                        canvas.drawLine(pointX1, pointY1, pointX2, pointY2, paint);
+//                        drawingView.draw(canvas);
                     }
                 }
             } while (data.moveToNext());
@@ -172,5 +173,59 @@ public class DrawingViewFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) { }
 
+    public void onExitApp(){
 
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+        builder.setTitle("Good Buy")
+                .setMessage("Thanks for your valuable Time \n\n  Feel free to contact me :)")
+                .setPositiveButton( "Exit" , new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        System.exit(0);
+                        return;
+
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+    }
+
+    public void deleteAllNotesByPhotoUri(){
+
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(getContext());
+        }
+        builder.setTitle("Delete Notes")
+                .setMessage("Are you sure you want to delete All Notes of this photo?")
+                .setPositiveButton( "Delete All", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Log.d(TAG , " kiriiiiiiiiiii ,  : " + photoUri);
+                        Log.d(TAG , " kiriiiiiiiiiii ,  : " + photoUri.getLastPathSegment());
+
+                        //if All_Note most deleted
+                        getActivity().getContentResolver().delete(
+                                DataBaseDescription.Note.CONTENT_URI,
+                                photoUri.getLastPathSegment(),
+                                null);
+
+                        drawingView.clear();
+                        // notify listener
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+    }
 }

@@ -63,12 +63,12 @@
             fab:fab_label="Gallery" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_1"
+            android:id="@+id/fabDeleteNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:menu_icon="@drawable/ic_clear_black_24"
             fab:fab_size="mini"
-            fab:fab_label="delete Notes" />
+            fab:fab_label="Delete Notes" />
 
 
     </com.github.clans.fab.FloatingActionMenu>
@@ -81,7 +81,7 @@
         android:layout_gravity="bottom|left"
         fab:fab_size="normal"
         fab:menu_icon="@drawable/fab_add"
-        fab:fab_colorNormal="@color/accent_purple_light"
+        fab:fab_colorNormal="@color/accent_blue_light"
         fab:fab_colorPressed="@color/accent"
         fab:fab_colorRipple="@color/accent"
         fab:fab_shadowColor="@color/accent"

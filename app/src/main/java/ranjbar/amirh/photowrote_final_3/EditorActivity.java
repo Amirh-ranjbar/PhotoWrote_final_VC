@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -47,12 +48,14 @@ public class  EditorActivity extends AppCompatActivity
     private FloatingActionButton fab2;
     private FloatingActionButton fab3;
     private FloatingActionButton fabEdit;
+    private FloatingActionButton fabDeletAll;
     private FrameLayout drawingViewFrameLayout;
     private Uri photoUri;// for loading notes as contactUri
     private int showHideFabs = 0;
     private int fabsState = 1;
     private boolean AddSave = false;
     private int openPicType=0;
+    private boolean detailFragmentIsOn = false;
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
     private static final int REQUEST_TAKE_PICTURE = 1;
@@ -83,9 +86,10 @@ public class  EditorActivity extends AppCompatActivity
         fabEdit.setVisibility(View.INVISIBLE);
         fabEdit.setOnClickListener(fabEdit_changeListener);
 
-        fab1 = (FloatingActionButton) findViewById(R.id.fab_1);
-        fab1.setOnClickListener(fab1_ChangeListener);
-        ButtonChangeIcon(fab1, R.drawable.ic_insert_photo_black_24);
+        fabDeletAll = (FloatingActionButton) findViewById(R.id.fabDeleteNotes);
+        fabDeletAll.setVisibility(View.INVISIBLE);
+        fabDeletAll.setOnClickListener(fabDeletAll_changeListener);
+        ButtonChangeIcon(fabDeletAll , R.drawable.ic_clear_black_24);
 
         fab2 = (FloatingActionButton) findViewById(R.id.fab_2);
         fab2.setOnClickListener(fab2_ChangeListener);
@@ -105,12 +109,14 @@ public class  EditorActivity extends AppCompatActivity
         transaction.commit(); // causes DetailFragment to display
     }
 
-    public View.OnClickListener fab1_ChangeListener = new View.OnClickListener() {
+    public View.OnClickListener fabDeletAll_changeListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
             //delete all notes
             //that saves with with photo uri name
-
+            if(photoUri != null) {
+                drawingViewFragment.deleteAllNotesByPhotoUri();
+            }
         }
     };
     public View.OnClickListener fab2_ChangeListener = new View.OnClickListener() {
@@ -191,7 +197,6 @@ public class  EditorActivity extends AppCompatActivity
             arguments.putParcelable(NOTE_URI , uri);
             arguments.putString(NOTE_TITLE,null);
             arguments.putString(NOTE_INFO , null);
-            arguments.putFloatArray(NOTE_PATH , null);
             detailFragment.setArguments(arguments);
         }
 
@@ -200,6 +205,7 @@ public class  EditorActivity extends AppCompatActivity
         transaction.add(R.id.editorFrame, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit(); // causes DetailFragment to display
+        detailFragmentIsOn = !transaction.isEmpty();
     }
 
     public void setDrawingView(){
@@ -209,7 +215,7 @@ public class  EditorActivity extends AppCompatActivity
         drawingViewFragment.setLoadEditState(true);
         drawingViewFragment.setDrawingViewlistener(changeListener);
 
-        //call it for Loading info by photoUri
+//        call it for Loading info by photoUri
         drawingViewFragment.getLoaderManager()
                 .restartLoader(DrawingViewFragment.NOTE_LOADER
                         , null,
@@ -378,10 +384,12 @@ public class  EditorActivity extends AppCompatActivity
     public void onSaveChanges(String title, String info) {
 
         getSupportFragmentManager().popBackStack();
+        detailFragmentIsOn = false;
 
         Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onSaveChanges : title :" +title);
         drawingViewFragment.saveNote(title , info);
 
+        drawingViewFragment.clearDrawingView();
         drawingViewFragment.getLoaderManager()
                 .restartLoader(DrawingViewFragment.NOTE_LOADER
                         , null,
@@ -395,6 +403,7 @@ public class  EditorActivity extends AppCompatActivity
         Log.d(TAG , "mameeeeeeeeee gonde , onNoteDeleted : title :" );
 
         getSupportFragmentManager().popBackStack();
+        detailFragmentIsOn = false;
 
         drawingViewFragment.clearDrawingView();
         drawingViewFragment.getLoaderManager()
@@ -404,9 +413,30 @@ public class  EditorActivity extends AppCompatActivity
         drawingViewFragment.setDrawingViewlistener(changeListener);
     }
 
+    @Override
+    public void onBackToMainMenu() {
+
+        getSupportFragmentManager().popBackStack();
+        detailFragmentIsOn = false;
+
+        drawingViewFragment.setLoadEditState(true);
+
+        drawingViewFragment.clearDrawingView();
+        drawingViewFragment.getLoaderManager()
+                .restartLoader(DrawingViewFragment.NOTE_LOADER
+                        , null,
+                        drawingViewFragment.getLoaderCallBack());
+        drawingViewFragment.setDrawingViewlistener(changeListener);
+    }
+
+    @Override
+    public void onNoteUpdated() {
+        getSupportFragmentManager().popBackStack();
+    }
+
     private DrawingView.DrawingViewListener changeListener = new DrawingView.DrawingViewListener() {
         @Override
-        public void onNoteTouched(String title, String info , float[] path , int id) {
+        public void onNoteTouched(String title, String info ) {
 
             Log.d(TAG , " onNoteTouched event ,  title : " + title);
             Log.d(TAG , " onNoteTouched event ,  info : " + info);
@@ -415,8 +445,6 @@ public class  EditorActivity extends AppCompatActivity
             //if(title == null && info == null)
             arguments.putString(NOTE_TITLE,title);
             arguments.putString(NOTE_INFO , info);
-            arguments.putFloatArray(NOTE_PATH , path);
-            arguments.putInt(NOTE_ID , id);
 
             setAddEditDetailsFragment(arguments, photoUri);
         }
@@ -432,8 +460,33 @@ public class  EditorActivity extends AppCompatActivity
         }
     };
 
+    boolean doubleBackToExitPressedOnce = false;
+
     @Override
     public void onBackPressed() {
+            if (detailFragmentIsOn) {
+                getSupportFragmentManager().popBackStack();
+                detailFragmentIsOn =false;
+            }
+//            else{
+//                android.os.Process.killProcess(android.os.Process.myPid());
+//            }
+            else {
+                if (!doubleBackToExitPressedOnce) {
+                    this.doubleBackToExitPressedOnce = true;
 
+                    drawingViewFragment.onExitApp();
+                    fabMenu.close(true);
+
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce = false;
+                        }
+                    }, 2000);
+
+                }
+            }
     }
 }
