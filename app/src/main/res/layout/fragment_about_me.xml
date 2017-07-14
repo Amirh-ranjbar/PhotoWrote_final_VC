@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/fragment_margin_sides"
+    android:layout_marginRight="@dimen/fragment_margin_sides"
+    android:layout_marginTop="@dimen/fragment_margin_topbottom"
+    android:layout_marginBottom="@dimen/fragment_margin_topbottom"
+    android:background="@color/icons">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:id="@+id/anoutMeImageView"
+                android:src="@drawable/aboutme"
+                android:scaleType="fitXY"
+                android:alpha="1" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_me"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:fontFamily="casual"
+            android:textSize="18dp"/>
+        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_me_emails"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/image_view_margin"
+
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/instagramIcon"
+            android:src="@drawable/insta_48px"
+            android:layout_marginLeft="@dimen/image_view_margin"
+            android:alpha="1" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/telegramIcon"
+            android:src="@drawable/telegram_48px"
+            android:layout_marginLeft="@dimen/image_view_margin"
+            android:alpha="1" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:text="Back"
+        android:id="@+id/aboutMeButton"
+        android:theme="@style/Button"
+        android:textSize="12dp"
+        android:fontFamily="casual"
+        />
+
+</FrameLayout>
