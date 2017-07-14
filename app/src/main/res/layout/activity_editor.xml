@@ -22,11 +22,12 @@
     </TextView>
 
     <TextView
-        android:text="Let's do it"
-        android:textSize="40dp"
+        android:text="Choose a pic from Gallery or take one by using Camera"
+        android:textSize="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/text2_padding_top"
+        android:paddingRight="32dp"
         android:paddingLeft="@dimen/text_padding_left"/>
 
     <com.github.clans.fab.FloatingActionMenu
@@ -46,12 +47,13 @@
         android:elevation="20dp">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_3"
+            android:id="@+id/fabDeleteNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            fab:menu_icon="@drawable/ic_clear_black_24"
             fab:fab_size="mini"
-            fab:menu_icon="@drawable/ic_camera_black_24"
-            fab:fab_label="Camera" />
+            fab:fab_colorNormal="@color/accent_orange_dark"
+            fab:fab_label="Erase All" />
 
 
         <com.github.clans.fab.FloatingActionButton
@@ -60,22 +62,27 @@
             android:layout_height="wrap_content"
             fab:menu_icon="@drawable/ic_note_add_black_24"
             fab:fab_size="mini"
+            fab:fab_colorNormal="@color/accent_orange_dark"
             fab:fab_label="Gallery" />
 
+
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabDeleteNotes"
+            android:id="@+id/fab_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:menu_icon="@drawable/ic_clear_black_24"
             fab:fab_size="mini"
-            fab:fab_label="Delete Notes" />
+            fab:menu_icon="@drawable/ic_camera_black_24"
+            fab:fab_label="Camera"
+            fab:fab_colorNormal="@color/accent_orange_dark"
+            />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabAboutMe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:menu_icon="@drawable/ic_school_black_24"
+            fab:menu_icon="@drawable/admin_icon_24"
             fab:fab_size="mini"
+            fab:fab_colorNormal="@color/accent_orange_dark"
             fab:fab_label="About Me" />
 
 

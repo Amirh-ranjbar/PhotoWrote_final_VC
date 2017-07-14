@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import ranjbar.amirh.photowrote_final_3.Views.DrawingView;
 import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription;
@@ -123,8 +122,7 @@ public class DrawingViewFragment extends Fragment
         if (data != null && data.moveToFirst() && photoUri != null) {
             Log.d(TAG, " onLoadFinished  jolotarrrrrrrr  , data  : " + data);
 
-            Toast.makeText(getContext(), "Previous Notes has Successfully Loaded", Toast.LENGTH_LONG).show();
-
+            //Toast.makeText(getContext(), "Previous Notes has Successfully Loaded", Toast.LENGTH_LONG).show();
 
 
             do {

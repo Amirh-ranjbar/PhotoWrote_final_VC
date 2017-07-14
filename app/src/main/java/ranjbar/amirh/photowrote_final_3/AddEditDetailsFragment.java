@@ -4,8 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,7 +97,9 @@ public class AddEditDetailsFragment extends Fragment {
         ButtonChangeIcon(backButton , R.drawable.ic_arrow_back_black_24);
 
         titleEditText = (EditText)view.findViewById(R.id.titleEditText);
+        titleEditText.addTextChangedListener(titleInfoChangeListener);
         infoEditText = (EditText) view.findViewById(R.id.infoEditText);
+        infoEditText.addTextChangedListener(titleInfoChangeListener);
 
         colorButton= (FloatingActionButton) view.findViewById(R.id.fab_color);
         colorButton.setOnClickListener(colorChangeListener);
@@ -122,6 +127,40 @@ public class AddEditDetailsFragment extends Fragment {
         return view;
     }
 
+    private TextWatcher titleInfoChangeListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        private int timeHiddenButtons= 1000;
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            Log.d(TAG," detail fragment on text changed ::: " + charSequence);
+            menu.hideMenuButton(true);
+            colorButton.hide(true);
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    menu.showMenuButton(true);
+                    colorButton.show(true);
+                }
+            }, timeHiddenButtons);
+
+            timeHiddenButtons+=500;
+
+            if(timeHiddenButtons > 8000)
+                timeHiddenButtons = 1000;
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            Log.d(TAG," detail fragment after text changed ::: " + editable);
+
+        }
+    };
 
     public View.OnClickListener saveChangesListener= new View.OnClickListener() {
         @Override
@@ -144,6 +183,19 @@ public class AddEditDetailsFragment extends Fragment {
                     //not the same
                     //update database by this note
                     Log.d(TAG, "saveChangesListener : need update :" + noteTitle);
+
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(getContext());
+                    }
+                    builder.setTitle("Update Changes")
+                            .setMessage("Sorry this feature is Disable by some Technical Problem " +
+                                    "with App DataBase")
+                            .setNegativeButton("Ok", null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
 
                 }
                 else{

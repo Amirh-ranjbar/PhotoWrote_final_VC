@@ -122,7 +122,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_label="Add Item" />
+            fab:fab_label="Add Item"
+            fab:fab_colorNormal="@color/accent_pink_light"/>
 
 
         <com.github.clans.fab.FloatingActionButton
@@ -130,21 +131,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_label="Delete" />
+            fab:fab_label="Delete"
+            fab:fab_colorNormal="@color/accent_pink_light"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/saveChangesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_label="Save" />
+            fab:fab_label="Save"
+            fab:fab_colorNormal="@color/accent_pink_light"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_label="Back" />
+            fab:fab_label="Back"
+            fab:fab_colorNormal="@color/accent_pink_light"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
@@ -154,7 +158,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
         fab:fab_size="normal"
-        fab:menu_icon="@drawable/fab_add"
+        fab:menu_icon="@drawable/color_24"
         fab:fab_colorNormal="@color/primary_light"
         fab:fab_colorPressed="@color/primary_light"
         fab:fab_colorRipple="@color/primary_light"

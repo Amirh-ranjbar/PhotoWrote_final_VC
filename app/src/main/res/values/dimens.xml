@@ -14,6 +14,6 @@
     <dimen name="edittext_color_padding">52dp</dimen>
     <dimen name="fragment_margin_sides">48dp</dimen>
     <dimen name="fragment_margin_topbottom">24dp</dimen>
-    <dimen name="text_size">24dp</dimen>
+    <dimen name="text_size">18dp</dimen>
     <dimen name="color_view_height">48dp</dimen>
 </resources>

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
@@ -24,7 +25,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -90,6 +90,7 @@ public class  EditorActivity extends AppCompatActivity
         fabDeletAll = (FloatingActionButton) findViewById(R.id.fabDeleteNotes);
         fabDeletAll.setOnClickListener(fabDeletAll_changeListener);
         ButtonChangeIcon(fabDeletAll , R.drawable.ic_clear_black_24);
+        fabDeletAll.setEnabled(false);
 
         fabAboutMe = (FloatingActionButton) findViewById(R.id.fabAboutMe);
         fabAboutMe.setOnClickListener(fabAboutMe_ChangeListener);
@@ -188,10 +189,12 @@ public class  EditorActivity extends AppCompatActivity
         }
     };
 
-    public void showFabEditButton(){
-        if(photoUri != null)
+    public void showFabEditButton() {
+        if (photoUri != null) {
             fabEdit.setVisibility(View.VISIBLE);
-            ButtonChangeIcon(fabEdit ,R.drawable.ic_mode_edit_black_24);
+            ButtonChangeIcon(fabEdit, R.drawable.ic_mode_edit_black_24);
+            fabDeletAll.setEnabled(true);
+        }
     }
 
     private void ButtonChangeIcon(FloatingActionButton button, int drawable){
@@ -338,16 +341,31 @@ public class  EditorActivity extends AppCompatActivity
                                     .getBitmap(cr, selectedImage);
 
                             imageView.setImageBitmap(bitmap);
-                            Toast.makeText(this, selectedImage.toString(),
-                                    Toast.LENGTH_LONG).show();
+
+                            Snackbar bar = Snackbar.make(imageView , selectedImage.toString() , Snackbar.LENGTH_SHORT)
+                                    .setAction("Dismiss", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            // Handle user action
+                                        }
+                                    });
+
+                            bar.show();
                             //setting photoUri for drawingFragment
                             setDrawingView();
                             galleryAddPic();
                             //show FabEdit for adding Note
                             showFabEditButton();
                         } catch (Exception e) {
-                            Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
-                                    .show();
+
+                            Snackbar bar = Snackbar.make(imageView , "Failed to load" , Snackbar.LENGTH_SHORT)
+                                    .setAction("Dismiss", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            // Handle user action
+                                        }
+                                    });
+
                             Log.e("Camera", e.toString());
                         }
                     }
@@ -497,7 +515,16 @@ public class  EditorActivity extends AppCompatActivity
     public void onBackPressed() {
             if (detailFragmentIsOn) {
                 getSupportFragmentManager().popBackStack();
-                detailFragmentIsOn =false;
+                detailFragmentIsOn = false;
+
+                drawingViewFragment.setLoadEditState(true);
+
+                drawingViewFragment.clearDrawingView();
+                drawingViewFragment.getLoaderManager()
+                        .restartLoader(DrawingViewFragment.NOTE_LOADER
+                                , null,
+                                drawingViewFragment.getLoaderCallBack());
+                drawingViewFragment.setDrawingViewlistener(changeListener);
             }
 //            else{
 //                android.os.Process.killProcess(android.os.Process.myPid());

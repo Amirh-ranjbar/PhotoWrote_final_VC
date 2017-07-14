@@ -15,14 +15,13 @@
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
-
-
     <color name="accent4">#009688</color>
     <color name="accent_purple_light">#7C4DFF</color>
     <color name="accent_blue_light">#00BCD4</color>
-
     <color name="shadow">#444</color>
-
     <color name="accent_green_light">#8BC34A</color>
+    <color name="accent_orange_dark">#FF5722</color>
+    <color name="accent_orange_light">#FFC107</color>
+    <color name="accent_pink_light">#FF4081</color>
 
 </resources>

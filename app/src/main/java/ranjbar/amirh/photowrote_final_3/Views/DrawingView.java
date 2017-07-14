@@ -10,11 +10,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -78,7 +78,7 @@ public class DrawingView extends View{
 
     public void setupPaint() {
 
-        noteImageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noteimage);
+        noteImageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pencil_icon);
         // Setup paint with color and stroke styles
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -166,8 +166,18 @@ public class DrawingView extends View{
         if(pointX1 == pointX2 && pointY1 == pointY2  )
         {
             if(!loadEditType) {
-                Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
+
                 drawingViewListener.onDrawLineDetected(false);
+                Snackbar bar = Snackbar.make(getRootView() , "Please Draw a Line", Snackbar.LENGTH_SHORT)
+                        .setAction("Dismiss", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Handle user action
+                            }
+                        });
+
+                bar.show();
             }
         }
         else  {
@@ -202,10 +212,10 @@ public class DrawingView extends View{
 
             canvas.drawPath(p, drawPaint);
             if(startPoint[0] < endPoint[0])
-                  canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.noteimage)
+                  canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.pencil_icon)
                           , startPoint[0] , startPoint[1] - height ,drawPaint);
             else
-                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.noteimage)
+                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.pencil_icon)
                         , endPoint[0] , endPoint[1] - height ,drawPaint);
         }
     }
@@ -321,8 +331,17 @@ public class DrawingView extends View{
 
 
             if (pointX1 == pointX2 && pointY1 == pointY2) {
-                if(!loadEditType)
-                    Toast.makeText(getContext(), "Please Draw a Line", Toast.LENGTH_LONG).show();
+                if(!loadEditType) {
+                    Snackbar bar = Snackbar.make(getRootView(), "Please Draw a Line", Snackbar.LENGTH_SHORT)
+                            .setAction("Dismiss", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    // Handle user action
+                                }
+                            });
+
+                    bar.show();
+                }
             } else  {
 
 //                Log.d(TAG, " points   : " + pointX1 + " + " + pointY1);
@@ -363,7 +382,16 @@ public class DrawingView extends View{
 
                     if (newContactUri != null) {
                         Log.v(TAG, " add shod , NewContactUri : " + newContactUri);
-                        Toast.makeText(getContext(), "New Note has Successfully Added", Toast.LENGTH_LONG).show();
+
+                        Snackbar bar = Snackbar.make(getRootView(), "New Note has Successfully Added" , Snackbar.LENGTH_LONG)
+                                .setAction("Dismiss", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        // Handle user action
+                                    }
+                                });
+
+                        bar.show();
 
                         //Snackbar.make(linearLayout,
                         //       R.string.note_added,Snackbar.LENGTH_LONG).show();
@@ -371,7 +399,6 @@ public class DrawingView extends View{
                     } else {
                         //Snackbar.make(linearLayout,
                         //        R.string.note_not_added, Snackbar.LENGTH_LONG).show();
-                        Log.d(TAG, "kirrrrrrrrrrr  2::  " + R.string.note_not_added);
                     }
                 }
                 else {
@@ -384,11 +411,9 @@ public class DrawingView extends View{
                         // listener.onAddEditCompleted(contactUri);
                         //   Snackbar.make(linearLayout,
                         //         R.string.note_updated, Snackbar.LENGTH_LONG).show();
-                        Log.d(TAG, "kirrrrrrrrrrr 3::  " + R.string.note_not_added);
                     } else {
                         //  Snackbar.make(linearLayout,
                         //        R.string.note_not_updated, Snackbar.LENGTH_LONG).show();
-                        Log.d(TAG, "kirrrrrrrrrrr 4::  " + R.string.note_not_updated);
                     }
                 }
             }
