@@ -32,6 +32,7 @@ public class DataBaseDescription {
         public static final String COLUMN_POINTY2 = "y2";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_INFO = "info";
+        public static final String COLUMN_COLOR = "color";
 
         // creates a Uri for a specific contact
         public static Uri buildContactUri(long id) {

@@ -70,6 +70,14 @@
             fab:fab_size="mini"
             fab:fab_label="Delete Notes" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabAboutMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:menu_icon="@drawable/ic_school_black_24"
+            fab:fab_size="mini"
+            fab:fab_label="About Me" />
+
 
     </com.github.clans.fab.FloatingActionMenu>
 

@@ -49,6 +49,7 @@ public class  EditorActivity extends AppCompatActivity
     private FloatingActionButton fab3;
     private FloatingActionButton fabEdit;
     private FloatingActionButton fabDeletAll;
+    private FloatingActionButton fabAboutMe;
     private FrameLayout drawingViewFrameLayout;
     private Uri photoUri;// for loading notes as contactUri
     private int showHideFabs = 0;
@@ -87,9 +88,12 @@ public class  EditorActivity extends AppCompatActivity
         fabEdit.setOnClickListener(fabEdit_changeListener);
 
         fabDeletAll = (FloatingActionButton) findViewById(R.id.fabDeleteNotes);
-        fabDeletAll.setVisibility(View.INVISIBLE);
         fabDeletAll.setOnClickListener(fabDeletAll_changeListener);
         ButtonChangeIcon(fabDeletAll , R.drawable.ic_clear_black_24);
+
+        fabAboutMe = (FloatingActionButton) findViewById(R.id.fabAboutMe);
+        fabAboutMe.setOnClickListener(fabAboutMe_ChangeListener);
+        ButtonChangeIcon(fabAboutMe, R.drawable.admin_icon_24);
 
         fab2 = (FloatingActionButton) findViewById(R.id.fab_2);
         fab2.setOnClickListener(fab2_ChangeListener);
@@ -162,6 +166,25 @@ public class  EditorActivity extends AppCompatActivity
                 fabEdit.setEnabled(false);
                 AddSave = true;
             }
+        }
+    };
+
+    private View.OnClickListener fabAboutMe_ChangeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+//            open AboutMeFragment
+
+            fabMenu.close(false);
+
+            detailFragmentIsOn = true;
+
+            AboutMeFragment aboutMeFragment = new AboutMeFragment();
+
+            FragmentTransaction transaction =
+                    getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.editorFrame, aboutMeFragment);
+            transaction.addToBackStack(null);
+            transaction.commit(); // causes DetailFragment to display
         }
     };
 
@@ -381,13 +404,14 @@ public class  EditorActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveChanges(String title, String info) {
+    public void onSaveChanges(String title, String info, String color) {
 
         getSupportFragmentManager().popBackStack();
         detailFragmentIsOn = false;
 
         Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onSaveChanges : title :" +title);
-        drawingViewFragment.saveNote(title , info);
+        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , onSaveChanges : color :" +color);
+        drawingViewFragment.saveNote(title , info, color);
 
         drawingViewFragment.clearDrawingView();
         drawingViewFragment.getLoaderManager()
@@ -432,6 +456,13 @@ public class  EditorActivity extends AppCompatActivity
     @Override
     public void onNoteUpdated() {
         getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onSetColorFragment() {
+
+        ColorGeneratorFragment colorDialog = new ColorGeneratorFragment();
+        colorDialog.show(getSupportFragmentManager(), "color dialog");
     }
 
     private DrawingView.DrawingViewListener changeListener = new DrawingView.DrawingViewListener() {

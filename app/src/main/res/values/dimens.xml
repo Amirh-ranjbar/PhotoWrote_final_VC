@@ -11,4 +11,9 @@
     <dimen name="imageview_max_height">72dp</dimen>
     <dimen name="edittext_margin">8dp</dimen>
     <dimen name="edittext_padding">12dp</dimen>
+    <dimen name="edittext_color_padding">52dp</dimen>
+    <dimen name="fragment_margin_sides">48dp</dimen>
+    <dimen name="fragment_margin_topbottom">24dp</dimen>
+    <dimen name="text_size">24dp</dimen>
+    <dimen name="color_view_height">48dp</dimen>
 </resources>

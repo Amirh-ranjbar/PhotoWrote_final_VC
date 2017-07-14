@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import ranjbar.amirh.photowrote_final_3.R;
 import ranjbar.amirh.photowrote_final_3.data.DataBaseDescription.Note;
@@ -48,6 +49,8 @@ public class DrawingView extends View{
     private ArrayList<Path> pathArrayList = new ArrayList<>();
     private ArrayList<String> titleArrayList = new ArrayList<>();
     private ArrayList<String> infoArrayList = new ArrayList<>();
+    private Vector<String> colorArray = new Vector<>();
+
     private boolean loadEditType= true;//Enter in Load Mode by defualt
 
     public DrawingView(Context context , AttributeSet attrs) {
@@ -90,7 +93,7 @@ public class DrawingView extends View{
         photoUri = uri;
     }
 
-    public void setArrayOfPoints(float p[], String title , String info ) {
+    public void setArrayOfPoints(float p[], String title , String info , String color ) {
         pointX1 = p[0];
         pointY1 = p[1];
         pointX2 = p[2];
@@ -105,18 +108,22 @@ public class DrawingView extends View{
 
         infoArrayList.add(info);
 
-        Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
-        Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
-        Log.d(TAG, "Set Array of infos , index:    " + infoArrayList.indexOf(info));
+        colorArray.add(color);
 
-        for(int i=0 ; i< pathArrayList.size() ; i++)
-            Log.d(TAG, "Set Array of paths , "+ i + "  :  " + pathArrayList.get(i));
+        Log.d(TAG, "Set Array of color , color:    " + color);
 
-        for(int i=0 ; i< titleArrayList.size() ; i++)
-            Log.d(TAG, "Set Array of title , "+ i + "  :  " + titleArrayList.get(i));
-
-        for(int i=0 ; i< infoArrayList.size() ; i++)
-            Log.d(TAG, "Set Array of info , "+ i + "  :  " + infoArrayList.get(i));
+//        Log.d(TAG, "Set Array of paths , index:    " + pathArrayList.indexOf(path));
+//        Log.d(TAG, "Set Array of titles , index:    " + titleArrayList.indexOf(title));
+//        Log.d(TAG, "Set Array of infos , index:    " + infoArrayList.indexOf(info));
+//
+//        for(int i=0 ; i< pathArrayList.size() ; i++)
+//            Log.d(TAG, "Set Array of paths , "+ i + "  :  " + pathArrayList.get(i));
+//
+//        for(int i=0 ; i< titleArrayList.size() ; i++)
+//            Log.d(TAG, "Set Array of title , "+ i + "  :  " + titleArrayList.get(i));
+//
+//        for(int i=0 ; i< infoArrayList.size() ; i++)
+//            Log.d(TAG, "Set Array of info , "+ i + "  :  " + infoArrayList.get(i));
 
     }
 
@@ -131,6 +138,7 @@ public class DrawingView extends View{
         pathArrayList.clear();
         titleArrayList.clear();
         infoArrayList.clear();
+        colorArray.clear();
         pointX1 = pointY1 = pointX2 = pointY2 = 0;
         Log.d(TAG , " on clear Drawing View , path : "+ pathArrayList.size());
         Log.d(TAG , " on clear Drawing View , title : "+ titleArrayList.size());
@@ -176,11 +184,21 @@ public class DrawingView extends View{
 
         for(Path p : pathArrayList ) {
 
+            if(colorArray.get(
+                    pathArrayList.indexOf(p)) != null) {
+                drawPaint.setColor(Color.parseColor(
+                        colorArray.get(
+                                pathArrayList.indexOf(p))));
+                Log.d(TAG , "onDrawwwwwwwwww paths :  color hast:" + pathArrayList.indexOf(p));
+
+            }
             pmStart = new PathMeasure(p,false);
             pmStart.getPosTan(0 ,startPoint,null);
 
             pmEnd = new PathMeasure(p,false);
             pmEnd.getPosTan(pmEnd.getLength() ,endPoint,null);
+
+            Log.d(TAG, " onDrawwwwwwwwww , color : " + drawPaint.getColor());
 
             canvas.drawPath(p, drawPaint);
             if(startPoint[0] < endPoint[0])
@@ -299,7 +317,7 @@ public class DrawingView extends View{
         return true;
     }
 
-    public void SavingNote(String title , String info) {
+    public void SavingNote(String title , String info , String color) {
 
 
             if (pointX1 == pointX2 && pointY1 == pointY2) {
@@ -322,6 +340,7 @@ public class DrawingView extends View{
                 contentValues.put(Note.COLUMN_POINTY2, pointY2);
                 contentValues.put(Note.COLUMN_TITLE, title);
                 contentValues.put(Note.COLUMN_INFO, info);
+                contentValues.put(Note.COLUMN_COLOR, color);
 
 
                 if (addingNewNote) {
@@ -334,6 +353,8 @@ public class DrawingView extends View{
                     titleArrayList.add(title);
 
                     infoArrayList.add(info);
+
+                    colorArray.add(color);
 
                     // use Activity's ContentResolver to invoke
                     // insert on the PhotoWroteContentProvider

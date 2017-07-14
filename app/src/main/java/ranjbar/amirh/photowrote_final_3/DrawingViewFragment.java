@@ -57,10 +57,11 @@ public class DrawingViewFragment extends Fragment
     }
 
     // saves Note information to the database
-    public void saveNote(String title , String info) {
+    public void saveNote(String title , String info , String color) {
         drawingView.setPhotoUri(photoUri);
         Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , saveNote: title :" + title);
-        drawingView.SavingNote(title, info);
+        Log.d(TAG , "konnnnnnnnnnnnnnnnnnn gonde , saveNote : color :" +color);
+        drawingView.SavingNote(title, info , color);
     }
 
     public  void setDrawingViewState(boolean state){
@@ -113,6 +114,7 @@ public class DrawingViewFragment extends Fragment
         return cursorLoader;
     }
 
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, " onLoadFinished  shod  , data  : " + data);
@@ -122,6 +124,8 @@ public class DrawingViewFragment extends Fragment
             Log.d(TAG, " onLoadFinished  jolotarrrrrrrr  , data  : " + data);
 
             Toast.makeText(getContext(), "Previous Notes has Successfully Loaded", Toast.LENGTH_LONG).show();
+
+
 
             do {
                 int nameIndex = data.getColumnIndex(Note.COLUMN_NAME);
@@ -138,6 +142,7 @@ public class DrawingViewFragment extends Fragment
                         int pointY2Index = data.getColumnIndex(Note.COLUMN_POINTY2);
                         int titleIndex = data.getColumnIndex(Note.COLUMN_TITLE);
                         int infoIndex = data.getColumnIndex(Note.COLUMN_INFO);
+                        int colorIndex = data.getColumnIndex(Note.COLUMN_COLOR);
 
                         float pointX1 = Float.valueOf(data.getString(pointX1Index));
                         float pointY1 = Float.valueOf(data.getString(pointY1Index));
@@ -145,6 +150,7 @@ public class DrawingViewFragment extends Fragment
                         float pointY2 = Float.valueOf(data.getString(pointY2Index));
                         String title = data.getString(titleIndex);
                         String info = data.getString(infoIndex);
+                        String color = data.getString(colorIndex);
 
                         Log.d(TAG, " onLoadFinished  shod  , point  : " + pointX1);
                         Log.d(TAG, " onLoadFinished  shod  , point  : " + pointY1);
@@ -152,16 +158,18 @@ public class DrawingViewFragment extends Fragment
                         Log.d(TAG, " onLoadFinished  shod  , point  : " + pointY2);
                         Log.d(TAG, " onLoadFinished  shod  , title  : " + title);
                         Log.d(TAG, " onLoadFinished  shod  , info  : " + info);
+                        Log.d(TAG, " onLoadFinished  shod  , color  : " + color);
 
                         float p[] = {pointX1, pointY1, pointX2, pointY2};
 
-                        drawingView.setArrayOfPoints(p, title, info );
+                        drawingView.setArrayOfPoints(p, title, info , color );
                         drawingView.postInvalidate();
 //                        Canvas canvas = new Canvas();
 //                        Paint paint = drawingView.getDrawPaint();
 //                        paint.setColor(Color.RED);
 //                        canvas.drawLine(pointX1, pointY1, pointX2, pointY2, paint);
 //                        drawingView.draw(canvas);
+
                     }
                 }
             } while (data.moveToNext());

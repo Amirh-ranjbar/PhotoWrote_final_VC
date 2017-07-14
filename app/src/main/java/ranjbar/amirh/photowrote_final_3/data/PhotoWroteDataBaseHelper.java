@@ -30,7 +30,8 @@ class PhotoWroteDataBaseHelper extends SQLiteOpenHelper {
                         Note.COLUMN_POINTX2 + " TEXT, " +
                         Note.COLUMN_POINTY2 + " TEXT, " +
                         Note.COLUMN_TITLE + " TEXT, " +
-                        Note.COLUMN_INFO + " TEXT);";
+                        Note.COLUMN_INFO + " TEXT, " +
+                        Note.COLUMN_COLOR + " TEXT);";
 
         db.execSQL(CREATE_CONTACTS_TABLE); // create the contacts table
     }

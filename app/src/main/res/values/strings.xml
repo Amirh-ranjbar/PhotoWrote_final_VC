@@ -17,5 +17,9 @@
         <string name="confirm_message">This will permanently delete the Note</string>
         <string name="button_cancel">Cancel</string>
         <string name="button_delete">Delete</string>
-
+        <string name="about_me">Hi i am Amirhossein\nkeep in touch with your creative recommends via :
+        </string>
+        <string name="about_me_emails">Amirh.ranjbar@gmail.com\n\nAmirh.ranjbar.eng@ieee.com</string>
+        <string name="title_color_dialog">Choose Color</string>
+        <string name="button_set_color">Set Color</string>
 </resources>

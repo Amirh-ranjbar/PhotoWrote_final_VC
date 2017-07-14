@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import static android.content.ContentValues.TAG;
 
@@ -23,10 +24,12 @@ import static android.content.ContentValues.TAG;
 
 public class AddEditDetailsFragment extends Fragment {
 
+    private FloatingActionMenu menu;
     private FloatingActionButton saveChangesButton;
     private FloatingActionButton deleteNoteButton;
     private FloatingActionButton AddItemButton;
     private FloatingActionButton backButton;
+    private FloatingActionButton colorButton;
     private EditText titleEditText;
     private EditText infoEditText;
 
@@ -34,14 +37,18 @@ public class AddEditDetailsFragment extends Fragment {
     private String noteInfo;
     private Uri photoUri;
 
+    private String colorNew = "#f50057";
+
     public interface AddEditDetailFragmentListener{
-        void onSaveChanges(String title , String info);
+        void onSaveChanges(String title , String info, String color);
 
         void onNoteDeleted();
 
         void onBackToMainMenu();
 
         void onNoteUpdated();
+
+        void onSetColorFragment();
     }
 
     private AddEditDetailFragmentListener detailFragmentListener;
@@ -66,6 +73,9 @@ public class AddEditDetailsFragment extends Fragment {
         View view = inflater.inflate(
                 R.layout.fragment_detail,container ,false);
 
+        menu =(FloatingActionMenu) view.findViewById(R.id.fabDetailFragment) ;
+        menu.setClosedOnTouchOutside(true);
+
         saveChangesButton = (FloatingActionButton) view.findViewById(R.id.saveChangesButton);
         saveChangesButton.setOnClickListener(saveChangesListener);
         ButtonChangeIcon(saveChangesButton , R.drawable.ic_save_black_24);
@@ -85,6 +95,10 @@ public class AddEditDetailsFragment extends Fragment {
 
         titleEditText = (EditText)view.findViewById(R.id.titleEditText);
         infoEditText = (EditText) view.findViewById(R.id.infoEditText);
+
+        colorButton= (FloatingActionButton) view.findViewById(R.id.fab_color);
+        colorButton.setOnClickListener(colorChangeListener);
+        ButtonChangeIcon(colorButton, R.drawable.color_36);
 
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -118,7 +132,9 @@ public class AddEditDetailsFragment extends Fragment {
                 noteInfo = infoEditText.getText().toString();
                 Log.d(TAG, "saveChangesListener : title :" + noteTitle);
                 Log.d(TAG, "saveChangesListener : info :" + noteInfo);
-                detailFragmentListener.onSaveChanges(noteTitle, noteInfo);
+                Log.d(TAG, "saveChangesListener : color :" + colorNew);
+
+                detailFragmentListener.onSaveChanges(noteTitle, noteInfo , colorNew);
             }
             else {
                 String title = titleEditText.getText().toString();
@@ -210,6 +226,19 @@ public class AddEditDetailsFragment extends Fragment {
 
         }
     };
+
+    private View.OnClickListener colorChangeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            detailFragmentListener.onSetColorFragment();
+        }
+    };
+
+    public void colorHasChanged(String color){
+        colorNew = color;
+    }
+
     private void ButtonChangeIcon(FloatingActionButton button, int drawable){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             button.setImageDrawable(getResources().getDrawable(drawable, getContext().getTheme()));
