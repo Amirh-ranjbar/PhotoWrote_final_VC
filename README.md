@@ -2,9 +2,9 @@
 
 My IEEEMadc contest Android App 
 
-![pjimage 1](https://user-images.githubusercontent.com/19997963/28237533-d9bee006-6956-11e7-81aa-764161b4032e.jpg)
+![photowrote_2](https://user-images.githubusercontent.com/19997963/28237831-0982e124-695d-11e7-8d7c-32cd6893d996.jpg)
 
-![PhotoWrote](https://user-images.githubusercontent.com/19997963/28237794-8b2cbdc2-695c-11e7-9296-b14d8419ec9a.jpg)
+![photowrote_1](https://user-images.githubusercontent.com/19997963/28237830-06370266-695d-11e7-963e-c48d8081ff13.jpg)
 
 
 
