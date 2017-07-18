@@ -4,8 +4,6 @@ My IEEEMadc contest Android App
 
 ![photowrote](https://user-images.githubusercontent.com/19997963/28338008-baa8e450-6c1c-11e7-96ad-25607a7602d8.jpg)
 
-![photowrote_3](https://user-images.githubusercontent.com/19997963/28239489-77b82e86-6982-11e7-8682-f6f16acb21ca.jpg)
-
 ![photowrote_2](https://user-images.githubusercontent.com/19997963/28237831-0982e124-695d-11e7-8d7c-32cd6893d996.jpg)
 
 ![photowrote_1](https://user-images.githubusercontent.com/19997963/28237830-06370266-695d-11e7-963e-c48d8081ff13.jpg)
